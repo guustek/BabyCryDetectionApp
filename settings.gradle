@@ -1,0 +1,3 @@
+
+rootProject.name = "BabyCryDetectionApp"
+include ':app'
