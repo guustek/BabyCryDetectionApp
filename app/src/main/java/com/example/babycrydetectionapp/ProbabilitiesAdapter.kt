@@ -25,9 +25,9 @@ class ProbabilitiesAdapter : RecyclerView.Adapter<ProbabilitiesAdapter.ViewHolde
         RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int, label: String, score: Float) {
             with(binding) {
-                probabilityClassText.text = label
+                labelTextView.text = label
                 val newValue = (score * 100).toInt()
-                probabilityValueBar.progress = newValue
+                progressBar.progress = newValue
             }
         }
     }

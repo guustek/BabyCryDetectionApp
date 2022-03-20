@@ -6,6 +6,8 @@ import android.media.AudioRecord
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
@@ -50,6 +52,8 @@ class MainActivity : AppCompatActivity() {
         handler = HandlerCompat.createAsync(handlerThread.looper)
 
         val classification = Runnable {
+            runOnUiThread { binding.progressBar.visibility = View.VISIBLE }
+
             val audioTensor = audioClassifier.createInputTensorAudio()
             audioTensor.load(audioRecord)
             val output = audioClassifier.classify(audioTensor)
@@ -62,6 +66,7 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread {
                 probabilitiesAdapter.categoryList = filteredModelOutput
                 probabilitiesAdapter.notifyDataSetChanged()
+                binding.progressBar.visibility = View.INVISIBLE
             }
         }
 
