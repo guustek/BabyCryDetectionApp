@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name" > </string>
-    <string name="classify">Classify</string>
+    <string name="app_name">BabyCryDetector</string>
+    <string name="listen">Listen</string>
 </resources>
