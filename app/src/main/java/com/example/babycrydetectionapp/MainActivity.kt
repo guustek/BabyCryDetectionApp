@@ -9,14 +9,10 @@ import android.os.HandlerThread
 import android.os.SystemClock
 import android.telephony.PhoneNumberUtils
 import android.telephony.SmsManager
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.babycrydetectionapp.MainActivity.Companion.REQUEST_RECORD_AUDIO
-import com.example.babycrydetectionapp.MainActivity.Companion.REQUEST_SEND_SMS
 import com.example.babycrydetectionapp.databinding.ActivityMainBinding
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import java.util.*
@@ -71,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startListening() {
         binding.timer.start()
-        binding.classifyButton.text = "Stop"
+        binding.classifyButton.text = getString(R.string.stop)
         binding.classifyButton.setOnClickListener {
             stopListening()
         }
@@ -90,21 +86,29 @@ class MainActivity : AppCompatActivity() {
                     -it.score
                 }
                 //Baby cry, infant cry
-                if (filteredOutput.any { it.label == "Speech" }) {
+                if (filteredOutput.any { it.label == "Baby cry, infant cry" }) {
                     runOnUiThread { stopListening() }
                     val smsManager = SmsManager.getDefault() as SmsManager
 
-                    val number = PhoneNumberUtils.formatNumber(binding.phoneNumber.text.toString(), Locale.getDefault().country)
+                    val number =
+                        PhoneNumberUtils.formatNumber(binding.phoneNumber.text.toString(), Locale.getDefault().country)
                     //5554 to numer mojego emulatora u was może być inaczej
-                    smsManager.sendTextMessage("5554", null, "TEST", null, null)
-                }
+                    smsManager.sendTextMessage(
+                        binding.phoneNumber.text.toString(),
+                        null,
+                        "Wykryto płacz dziecka!",
+                        null,
+                        null
+                    )
+                } else
+                // Rerun the classification after a certain interval if didnt find searched sound class
+                    handler.postDelayed(this, classificationInterval)
 
                 runOnUiThread {
                     probabilitiesAdapter.categoryList = filteredOutput
                     probabilitiesAdapter.notifyDataSetChanged()
                 }
-                // Rerun the classification after a certain interval
-                handler.postDelayed(this, classificationInterval)
+
             }
         }
         // rozpoczęcie nasłuchiwania
@@ -113,11 +117,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun stopListening() {
-        binding.timer.base = SystemClock.elapsedRealtime();
-        binding.timer.stop()
         audioRecord.stop()
+        binding.timer.base = SystemClock.elapsedRealtime()
+        binding.timer.stop()
         handler.removeCallbacksAndMessages(null)
-        binding.classifyButton.text = "Listen"
+        binding.classifyButton.text = getString(R.string.listen)
         binding.classifyButton.setOnClickListener {
             startListening()
         }
