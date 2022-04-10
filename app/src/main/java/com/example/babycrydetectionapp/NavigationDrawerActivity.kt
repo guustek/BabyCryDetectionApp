@@ -14,6 +14,8 @@ import com.example.babycrydetectionapp.databinding.ActivityNavigationDrawerBindi
 
 class NavigationDrawerActivity : AppCompatActivity() {
 
+//uselesss nie ma na co patrzeć
+
     private lateinit var appBarConfiguration: AppBarConfiguration
 private lateinit var binding: ActivityNavigationDrawerBinding
 
@@ -23,7 +25,7 @@ private lateinit var binding: ActivityNavigationDrawerBinding
      binding = ActivityNavigationDrawerBinding.inflate(layoutInflater)
      setContentView(binding.root)
 
-        setSupportActionBar(binding.appBarNavigationDrawer.toolbar)
+//        setSupportActionBar(binding.appBarNavigationDrawer.toolbar)
 
         binding.appBarNavigationDrawer.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
