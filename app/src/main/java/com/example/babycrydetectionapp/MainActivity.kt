@@ -15,6 +15,9 @@ import android.view.MenuInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.babycrydetectionapp.databinding.ActivityMainBinding
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
@@ -32,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     private var classificationInterval = 500L
 
+    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private val probabilitiesAdapter by lazy { ProbabilitiesAdapter() }
 
@@ -41,6 +45,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -155,9 +161,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.menu, menu)
-        return true
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        val inflater: MenuInflater = menuInflater
+//        inflater.inflate(R.menu.navigation_drawer, menu)
+//        return true
+//    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment_content_navigation_drawer)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
