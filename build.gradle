@@ -8,6 +8,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+
         classpath 'com.android.tools.build:gradle:7.0.4'
         classpath 'de.undercouch:gradle-download-task:4.1.1' // to download model
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"

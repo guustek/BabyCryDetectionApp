@@ -9,6 +9,9 @@ import android.os.HandlerThread
 import android.os.SystemClock
 import android.telephony.PhoneNumberUtils
 import android.telephony.SmsManager
+import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
@@ -67,12 +70,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun startListening() {
         binding.timer.start()
-        binding.classifyButton.text = getString(R.string.stop)
+        binding.classifyButton.setImageResource(R.drawable.rectangle_48dp);
         binding.classifyButton.setOnClickListener {
             stopListening()
         }
         val classification = object : Runnable {
             override fun run() {
+                val begin = System.nanoTime()
                 // tworzy obiekt przechowujący dane do klasyfikacji
                 val tensorAudio = audioClassifier.createInputTensorAudio()
                 // ładuje próbkę dźwięku
@@ -108,8 +112,10 @@ class MainActivity : AppCompatActivity() {
                     probabilitiesAdapter.categoryList = filteredOutput
                     probabilitiesAdapter.notifyDataSetChanged()
                 }
-
+                val end = System.nanoTime()
+                Log.d("Classification","Elapsed time in seconds: ${(end-begin)/1000000}")
             }
+
         }
         // rozpoczęcie nasłuchiwania
         audioRecord.startRecording()
@@ -120,8 +126,8 @@ class MainActivity : AppCompatActivity() {
         audioRecord.stop()
         binding.timer.base = SystemClock.elapsedRealtime()
         binding.timer.stop()
+        binding.classifyButton.setImageResource(R.drawable.micro_48dp);
         handler.removeCallbacksAndMessages(null)
-        binding.classifyButton.text = getString(R.string.listen)
         binding.classifyButton.setOnClickListener {
             startListening()
         }
@@ -147,5 +153,11 @@ class MainActivity : AppCompatActivity() {
         } else {
             requestPermissions(arrayOf(Manifest.permission.SEND_SMS), REQUEST_SEND_SMS)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu, menu)
+        return true
     }
 }
