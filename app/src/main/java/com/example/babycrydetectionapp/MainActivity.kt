@@ -10,6 +10,7 @@ import android.os.SystemClock
 import android.telephony.PhoneNumberUtils
 import android.telephony.SmsManager
 import android.util.Log
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuInflater
 import androidx.appcompat.app.AppCompatActivity
@@ -46,8 +47,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -71,6 +70,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.classifyButton.setOnClickListener {
             startListening()
+        }
+        binding.button.setOnClickListener {
+        binding.drawerLayout.openDrawer(Gravity.LEFT)
         }
     }
 
@@ -161,14 +163,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        val inflater: MenuInflater = menuInflater
-//        inflater.inflate(R.menu.navigation_drawer, menu)
-//        return true
-//    }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_navigation_drawer)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
 }

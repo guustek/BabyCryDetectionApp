@@ -21,6 +21,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="@color/main_background"
         app:headerLayout="@layout/nav_header_navigation_drawer"
         app:menu="@menu/activity_main_drawer" />
 
@@ -32,6 +33,29 @@
         android:gravity="center"
 
         tools:context=".MainActivity">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" >
+
+            <ImageButton
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/menu"
+                tools:ignore="TouchTargetSizeCheck"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="10dp" />
+
+        </androidx.appcompat.widget.Toolbar>
+
 
         <Chronometer
             android:id="@+id/timer"
