@@ -13,4 +13,18 @@
     <string name="menu_home">Tutorial</string>
     <string name="menu_gallery">Contacts</string>
     <string name="menu_slideshow">Settings</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="message_preferences_header">Messages</string>
+    <string name="view_preferences_header">View</string>
+
+    <!-- Messages Preferences -->
+    <string name="detection_message">Detection message text</string>
+    <string name="detection_interval">Detection interval</string>
+    <string name="night_mode">Night mode</string>
+    <string name="display_classification_results">Display classification results</string>
+    <string name="open_menu">Open menu</string>
+    <string name="listen_stop">Listen/Stop</string>
+
 </resources>

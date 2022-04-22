@@ -1,0 +1,31 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/message_preferences_header">
+
+        <EditTextPreference
+            app:key="detection_message_text"
+            app:title="@string/detection_message"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:key="detection_interval"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/detection_interval"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/view_preferences_header">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="night_mode"
+            android:title="@string/night_mode" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="display_results"
+            android:title="@string/display_classification_results" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

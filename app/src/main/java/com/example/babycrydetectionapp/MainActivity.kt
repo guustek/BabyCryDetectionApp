@@ -1,6 +1,7 @@
 package com.example.babycrydetectionapp
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioRecord
 import android.os.Bundle
@@ -11,16 +12,14 @@ import android.telephony.PhoneNumberUtils
 import android.telephony.SmsManager
 import android.util.Log
 import android.view.Gravity
-import android.view.Menu
-import android.view.MenuInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
-import androidx.navigation.findNavController
+import androidx.core.view.GravityCompat
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.babycrydetectionapp.databinding.ActivityMainBinding
+import com.google.android.material.navigation.NavigationView
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import java.util.*
 
@@ -32,11 +31,10 @@ class MainActivity : AppCompatActivity() {
         const val REQUEST_SEND_SMS = 2115
         private const val MODEL_FILE = "yamnet.tflite"
         private const val MINIMUM_DISPLAY_THRESHOLD = 0.3f
+        private const val CLASSIFICATION_INTERVAL = 500L
     }
 
-    private var classificationInterval = 500L
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private val probabilitiesAdapter by lazy { ProbabilitiesAdapter() }
 
@@ -72,9 +70,25 @@ class MainActivity : AppCompatActivity() {
             startListening()
         }
         binding.button.setOnClickListener {
-        binding.drawerLayout.openDrawer(Gravity.LEFT)
+//            val intent = Intent(this, SettingsActivity::class.java)
+//            startActivity(intent)
+             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+
+
+        binding.navView.setNavigationItemSelectedListener {
+            when(it.itemId){
+//                R.id.menu_tutorial -> startActivity(Intent(this,TutorialActivity::class.java))
+//                R.id.menu_contacts -> startActivity(Intent(this,ContactsActivity::class.java))
+                 R.id.menu_settings -> startActivity(Intent(this,SettingsActivity::class.java))
+            }
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            false
+        }
+        binding.navView.bringToFront()
     }
+
+
 
     private fun startListening() {
         binding.timer.start()
@@ -114,14 +128,14 @@ class MainActivity : AppCompatActivity() {
                     )
                 } else
                 // Rerun the classification after a certain interval if didnt find searched sound class
-                    handler.postDelayed(this, classificationInterval)
+                    handler.postDelayed(this, CLASSIFICATION_INTERVAL)
 
                 runOnUiThread {
                     probabilitiesAdapter.categoryList = filteredOutput
                     probabilitiesAdapter.notifyDataSetChanged()
                 }
                 val end = System.nanoTime()
-                Log.d("Classification","Elapsed time in seconds: ${(end-begin)/1000000}")
+                Log.d("Classification", "Elapsed time in milliseconds: ${(end - begin) / 1000000}")
             }
 
         }

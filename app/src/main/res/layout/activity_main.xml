@@ -9,12 +9,6 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <include
-        android:id="@+id/app_bar_navigation_drawer"
-        layout="@layout/app_bar_navigation_drawer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
@@ -22,24 +16,21 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         android:background="@color/main_background"
-        app:headerLayout="@layout/nav_header_navigation_drawer"
-        app:menu="@menu/activity_main_drawer" />
+        app:headerLayout="@layout/nav_view_header"
+        app:menu="@menu/main_menu" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/main_background"
-        android:gravity="center"
-
-        tools:context=".MainActivity">
+        android:gravity="center">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar2"
+            android:id="@+id/main_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:minHeight="?attr/actionBarSize"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" >
@@ -49,10 +40,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:src="@drawable/menu"
-                tools:ignore="TouchTargetSizeCheck"
-                tools:layout_editor_absoluteX="16dp"
-                tools:layout_editor_absoluteY="10dp" />
+                android:contentDescription="@string/open_menu"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:src="@drawable/menu_button" />
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -91,7 +82,8 @@
             app:backgroundTint="@color/annoying_orange"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phone_number" />
+            app:layout_constraintTop_toBottomOf="@+id/phone_number"
+            android:contentDescription="@string/listen_stop" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/probabilities_list"
