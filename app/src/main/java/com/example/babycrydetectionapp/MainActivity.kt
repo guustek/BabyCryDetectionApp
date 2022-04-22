@@ -11,20 +11,17 @@ import android.os.SystemClock
 import android.telephony.PhoneNumberUtils
 import android.telephony.SmsManager
 import android.util.Log
-import android.view.Gravity
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.GravityCompat
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.babycrydetectionapp.databinding.ActivityMainBinding
-import com.google.android.material.navigation.NavigationView
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import java.util.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AbstractActivity() {
 
     companion object {
         const val REQUEST_RECORD_AUDIO = 2137
@@ -72,22 +69,27 @@ class MainActivity : AppCompatActivity() {
         binding.button.setOnClickListener {
 //            val intent = Intent(this, SettingsActivity::class.java)
 //            startActivity(intent)
-             binding.drawerLayout.openDrawer(GravityCompat.START)
+            binding.drawerLayout.openDrawer(GravityCompat.START)
         }
 
 
         binding.navView.setNavigationItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
 //                R.id.menu_tutorial -> startActivity(Intent(this,TutorialActivity::class.java))
 //                R.id.menu_contacts -> startActivity(Intent(this,ContactsActivity::class.java))
-                 R.id.menu_settings -> startActivity(Intent(this,SettingsActivity::class.java))
+                R.id.menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             false
         }
         binding.navView.bringToFront()
-    }
 
+        binding.probabilitiesList.visibility =
+            if (preferences.getBoolean("display_results", true)) View.VISIBLE else View.INVISIBLE
+
+        binding.timer.visibility =
+            if (preferences.getBoolean("display_timer", true)) View.VISIBLE else View.INVISIBLE
+    }
 
 
     private fun startListening() {
@@ -122,7 +124,7 @@ class MainActivity : AppCompatActivity() {
                     smsManager.sendTextMessage(
                         binding.phoneNumber.text.toString(),
                         null,
-                        "Wykryto płacz dziecka!",
+                        preferences.getString("detection_message_text",getString(R.string.detection_default_message)),
                         null,
                         null
                     )
@@ -130,10 +132,11 @@ class MainActivity : AppCompatActivity() {
                 // Rerun the classification after a certain interval if didnt find searched sound class
                     handler.postDelayed(this, CLASSIFICATION_INTERVAL)
 
-                runOnUiThread {
-                    probabilitiesAdapter.categoryList = filteredOutput
-                    probabilitiesAdapter.notifyDataSetChanged()
-                }
+                if (preferences.getBoolean("display_results", true))
+                    runOnUiThread {
+                        probabilitiesAdapter.categoryList = filteredOutput
+                        probabilitiesAdapter.notifyDataSetChanged()
+                    }
                 val end = System.nanoTime()
                 Log.d("Classification", "Elapsed time in milliseconds: ${(end - begin) / 1000000}")
             }
@@ -176,6 +179,4 @@ class MainActivity : AppCompatActivity() {
             requestPermissions(arrayOf(Manifest.permission.SEND_SMS), REQUEST_SEND_SMS)
         }
     }
-
-
 }
