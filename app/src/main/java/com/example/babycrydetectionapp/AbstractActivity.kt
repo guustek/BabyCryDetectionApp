@@ -2,8 +2,8 @@ package com.example.babycrydetectionapp
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
 
 abstract class AbstractActivity : AppCompatActivity(){
 

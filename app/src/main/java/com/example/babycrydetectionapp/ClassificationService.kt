@@ -1,14 +1,23 @@
 package com.example.babycrydetectionapp
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.media.AudioRecord
+import android.os.Build
+import android.os.Build.VERSION_CODES
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
 import android.telephony.SmsManager
 import android.util.Log
+import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import androidx.core.os.HandlerCompat
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 
@@ -26,11 +35,18 @@ class ClassificationService : Service() {
     private val audioClassifier: AudioClassifier by lazy { AudioClassifier.createFromFile(this, MODEL_FILE) }
     private lateinit var audioRecord: AudioRecord
     private lateinit var handler: Handler
+    private lateinit var notificationManager: NotificationManager
+    private lateinit var notificationChannel: NotificationChannel
+    private lateinit var notificationBuilder: NotificationCompat.Builder
+    private val channelId = "com.example.babycrydetectionapp"
+
 
     override fun onCreate() {
         super.onCreate()
         // utworzenie audio rekordera na podstawie formatu wymaganego przez klasyfikator
         audioRecord = audioClassifier.createAudioRecord()
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        createNotification()
         // utworzenie handlera oddzielnego wątku klasyfikacji
         val handlerThread = HandlerThread("classificationThread")
         handlerThread.start()
@@ -41,10 +57,6 @@ class ClassificationService : Service() {
         startListening()
         return START_REDELIVER_INTENT
 
-    }
-
-    private fun createNotification(): Notification {
-        TODO("Powiadomienie o działającym serwisie")
     }
 
     private fun startListening() {
@@ -101,5 +113,23 @@ class ClassificationService : Service() {
 
     override fun onBind(intent: Intent): IBinder? {
         return null
+    }
+
+    private fun createNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel = NotificationChannel(channelId,"pizda",NotificationManager.IMPORTANCE_HIGH)
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.CYAN
+            notificationChannel.enableVibration(false)
+            notificationManager.createNotificationChannel(notificationChannel)
+            notificationBuilder = NotificationCompat.Builder(this, channelId)
+                .setContentTitle("balls")
+                .setContentText("cum")
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.mipmap.ic_launcher))
+            notificationManager.createNotificationChannel(notificationChannel)
+            notificationManager.notify(123,notificationBuilder.build())
+        }else Toast.makeText(this,"api small", Toast.LENGTH_LONG).show()
+        return
     }
 }

@@ -2,15 +2,22 @@ package com.example.babycrydetectionapp
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +48,8 @@ class MainActivity : AbstractActivity() {
         intentFilter.addAction(ClassificationService.SERVICE_FINISHED)
         registerReceiver(classificationServiceReceiver, intentFilter)
 
+
+
         with(binding) {
             probabilitiesList.apply {
                 adapter = probabilitiesAdapter
@@ -51,7 +60,9 @@ class MainActivity : AbstractActivity() {
         requestMicrophonePermission()
         requestSmsSendingPermission()
 
-        binding.classifyButton.setOnClickListener { startListening() }
+        binding.classifyButton.setOnClickListener {
+            startListening()
+        }
 
         binding.button.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
 
@@ -139,4 +150,6 @@ class MainActivity : AbstractActivity() {
             requestPermissions(arrayOf(Manifest.permission.SEND_SMS), REQUEST_SEND_SMS)
         }
     }
+
+
 }
