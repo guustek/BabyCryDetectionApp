@@ -1,24 +1,20 @@
 package com.example.babycrydetectionapp
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.media.AudioRecord
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
 import android.os.SystemClock
-import android.telephony.PhoneNumberUtils
-import android.telephony.SmsManager
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.os.HandlerCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.babycrydetectionapp.databinding.ActivityMainBinding
-import org.tensorflow.lite.task.audio.classifier.AudioClassifier
-import java.util.*
 
 
 class MainActivity : AbstractActivity() {
@@ -26,18 +22,12 @@ class MainActivity : AbstractActivity() {
     companion object {
         const val REQUEST_RECORD_AUDIO = 2137
         const val REQUEST_SEND_SMS = 2115
-        private const val MODEL_FILE = "yamnet.tflite"
-        private const val MINIMUM_DISPLAY_THRESHOLD = 0.3f
-        private const val CLASSIFICATION_INTERVAL = 500L
     }
 
 
     private lateinit var binding: ActivityMainBinding
     private val probabilitiesAdapter by lazy { ProbabilitiesAdapter() }
-
-    private val audioClassifier: AudioClassifier by lazy { AudioClassifier.createFromFile(this, MODEL_FILE) }
-    private lateinit var audioRecord: AudioRecord
-    private lateinit var handler: Handler
+    private lateinit var serviceIntent: Intent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,33 +35,25 @@ class MainActivity : AbstractActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        serviceIntent = Intent(applicationContext, ClassificationService::class.java)
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(ClassificationService.CLASSIFICATION_RESULT)
+        intentFilter.addAction(ClassificationService.SERVICE_FINISHED)
+        registerReceiver(classificationServiceReceiver, intentFilter)
+
         with(binding) {
             probabilitiesList.apply {
                 adapter = probabilitiesAdapter
                 layoutManager = LinearLayoutManager(context)
             }
         }
-
         // zażądanie pozwolenia na nagrywanie audio
         requestMicrophonePermission()
         requestSmsSendingPermission()
-        // utworzenie audio rekordera na podstawie formatu wymaganego przez klasyfikator
-        audioRecord = audioClassifier.createAudioRecord()
 
-        // utworzenie handlera oddzielnego wątku klasyfikacji
-        val handlerThread = HandlerThread("classificationThread")
-        handlerThread.start()
-        handler = HandlerCompat.createAsync(handlerThread.looper)
+        binding.classifyButton.setOnClickListener { startListening() }
 
-        binding.classifyButton.setOnClickListener {
-            startListening()
-        }
-        binding.button.setOnClickListener {
-//            val intent = Intent(this, SettingsActivity::class.java)
-//            startActivity(intent)
-            binding.drawerLayout.openDrawer(GravityCompat.START)
-        }
-
+        binding.button.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
 
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
@@ -83,7 +65,10 @@ class MainActivity : AbstractActivity() {
             false
         }
         binding.navView.bringToFront()
+    }
 
+    override fun onResume() {
+        super.onResume()
         binding.probabilitiesList.visibility =
             if (preferences.getBoolean("display_results", true)) View.VISIBLE else View.INVISIBLE
 
@@ -91,70 +76,43 @@ class MainActivity : AbstractActivity() {
             if (preferences.getBoolean("display_timer", true)) View.VISIBLE else View.INVISIBLE
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        stopService(Intent(this, ClassificationService::class.java))
+        unregisterReceiver(classificationServiceReceiver)
+    }
 
     private fun startListening() {
+        binding.timer.base = SystemClock.elapsedRealtime()
         binding.timer.start()
-        binding.classifyButton.setImageResource(R.drawable.rectangle_48dp);
-        binding.classifyButton.setOnClickListener {
-            stopListening()
-        }
-        val classification = object : Runnable {
-            override fun run() {
-                val begin = System.nanoTime()
-                // tworzy obiekt przechowujący dane do klasyfikacji
-                val tensorAudio = audioClassifier.createInputTensorAudio()
-                // ładuje próbkę dźwięku
-                tensorAudio.load(audioRecord)
-                // klasyfikacja
-                val output = audioClassifier.classify(tensorAudio)
-                // filtrowanie (tylko kategorie z prawdopodobieństwem > 0.3)
-                val filteredOutput = output[0].categories.filter {
-                    it.score > MINIMUM_DISPLAY_THRESHOLD
-                }.sortedBy {
-                    -it.score
-                }
-                //Baby cry, infant cry
-                if (filteredOutput.any { it.label == "Baby cry, infant cry" }) {
-                    runOnUiThread { stopListening() }
-                    val smsManager = SmsManager.getDefault() as SmsManager
-
-                    val number =
-                        PhoneNumberUtils.formatNumber(binding.phoneNumber.text.toString(), Locale.getDefault().country)
-                    //5554 to numer mojego emulatora u was może być inaczej
-                    smsManager.sendTextMessage(
-                        binding.phoneNumber.text.toString(),
-                        null,
-                        preferences.getString("detection_message_text",getString(R.string.detection_default_message)),
-                        null,
-                        null
-                    )
-                } else
-                // Rerun the classification after a certain interval if didnt find searched sound class
-                    handler.postDelayed(this, CLASSIFICATION_INTERVAL)
-
-                if (preferences.getBoolean("display_results", true))
-                    runOnUiThread {
-                        probabilitiesAdapter.categoryList = filteredOutput
-                        probabilitiesAdapter.notifyDataSetChanged()
-                    }
-                val end = System.nanoTime()
-                Log.d("Classification", "Elapsed time in milliseconds: ${(end - begin) / 1000000}")
-            }
-
-        }
-        // rozpoczęcie nasłuchiwania
-        audioRecord.startRecording()
-        handler.post(classification)
+        applicationContext.startService(Intent(this, ClassificationService::class.java))
+        binding.classifyButton.setImageResource(R.drawable.rectangle_48dp)
+        binding.classifyButton.setOnClickListener { stopListening() }
     }
 
     private fun stopListening() {
-        audioRecord.stop()
-        binding.timer.base = SystemClock.elapsedRealtime()
         binding.timer.stop()
-        binding.classifyButton.setImageResource(R.drawable.micro_48dp);
-        handler.removeCallbacksAndMessages(null)
-        binding.classifyButton.setOnClickListener {
-            startListening()
+        binding.timer.base = SystemClock.elapsedRealtime()
+        applicationContext.stopService(Intent(this, ClassificationService::class.java))
+        binding.classifyButton.setImageResource(R.drawable.micro_48dp)
+        binding.classifyButton.setOnClickListener { startListening() }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private val classificationServiceReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                ClassificationService.CLASSIFICATION_RESULT -> {
+                    val parcel =
+                        intent.getParcelableArrayListExtra<CategoryAdapter>(ClassificationService.CLASSIFICATION_RESULT)
+                    val categories = parcel!!.map { it.wrappedCategory() }
+                    runOnUiThread {
+                        probabilitiesAdapter.categoryList = categories
+                        probabilitiesAdapter.notifyDataSetChanged()
+                    }
+                }
+                ClassificationService.SERVICE_FINISHED -> stopListening()
+            }
         }
     }
 
@@ -164,6 +122,7 @@ class MainActivity : AbstractActivity() {
                 Manifest.permission.RECORD_AUDIO
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            Log.d("Permissions", "Microphone permission granted")
         } else {
             requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_RECORD_AUDIO)
         }
@@ -175,6 +134,7 @@ class MainActivity : AbstractActivity() {
                 Manifest.permission.SEND_SMS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            Log.d("Permissions", "Sms sending permission granted")
         } else {
             requestPermissions(arrayOf(Manifest.permission.SEND_SMS), REQUEST_SEND_SMS)
         }
