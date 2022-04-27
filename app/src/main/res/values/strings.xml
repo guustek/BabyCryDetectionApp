@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">BabyCryDetector</string>
+    <string name="app_name" translatable="false">BabyCryDetector</string>
     <string name="navigation_drawer_open">Open navigation menu</string>
     <string name="navigation_drawer_close">Close navigation menu</string>
+    <string name="notification_content_title">BabyCryDetector is listening</string>
 
     <string name="tutorial">Tutorial</string>
     <string name="contacts">Contacts</string>
@@ -22,6 +23,7 @@
     <string name="night_mode_preference_title">Night mode</string>
     <string name="display_classification_results_preference_title">Display classification results</string>
     <string name="display_timer_preference_title">Display timer</string>
+    <string name="stop">Stop</string>
 
 
 </resources>

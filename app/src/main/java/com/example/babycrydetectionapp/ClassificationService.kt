@@ -1,13 +1,10 @@
 package com.example.babycrydetectionapp
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.graphics.Color
+import android.content.SharedPreferences
+import android.media.AudioManager
 import android.media.AudioRecord
 import android.os.Build
 import android.os.Build.VERSION_CODES
@@ -16,9 +13,9 @@ import android.os.HandlerThread
 import android.os.IBinder
 import android.telephony.SmsManager
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.os.HandlerCompat
+import androidx.preference.PreferenceManager
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 
 
@@ -28,25 +25,26 @@ class ClassificationService : Service() {
         private const val MODEL_FILE = "yamnet.tflite"
         private const val MINIMUM_DISPLAY_THRESHOLD = 0.3f
         private const val CLASSIFICATION_INTERVAL = 500L
-        const val CLASSIFICATION_RESULT = "XD"
-        const val SERVICE_FINISHED = "JP2"
+        const val RESULT_BROADCAST = "XD"
+        const val FINISHED_BROADCAST = "JP2"
+        private const val NOTIFICATION_CHANNEL_ID = "com.example.babycrydetectionapp"
+        private const val SERVICE_ID = 420
     }
 
+    private lateinit var preferences: SharedPreferences
     private val audioClassifier: AudioClassifier by lazy { AudioClassifier.createFromFile(this, MODEL_FILE) }
     private lateinit var audioRecord: AudioRecord
     private lateinit var handler: Handler
-    private lateinit var notificationManager: NotificationManager
-    private lateinit var notificationChannel: NotificationChannel
-    private lateinit var notificationBuilder: NotificationCompat.Builder
-    private val channelId = "com.example.babycrydetectionapp"
 
 
     override fun onCreate() {
         super.onCreate()
+
         // utworzenie audio rekordera na podstawie formatu wymaganego przez klasyfikator
         audioRecord = audioClassifier.createAudioRecord()
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        createNotification()
+        preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        setupNotificationChannel()
+
         // utworzenie handlera oddzielnego wątku klasyfikacji
         val handlerThread = HandlerThread("classificationThread")
         handlerThread.start()
@@ -55,11 +53,15 @@ class ClassificationService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startListening()
+        startForeground(SERVICE_ID, createNotification())
         return START_REDELIVER_INTENT
-
     }
 
     private fun startListening() {
+        if (preferences.getBoolean("mute_phone", false)) {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+        }
         val classification = object : Runnable {
             override fun run() {
                 val begin = System.nanoTime()
@@ -77,15 +79,21 @@ class ClassificationService : Service() {
                 }
 
                 val wrappedOutput = ArrayList(filteredOutput.map { category -> CategoryAdapter(category) })
-                val broadcastIntent = Intent(CLASSIFICATION_RESULT)
-                broadcastIntent.putParcelableArrayListExtra(CLASSIFICATION_RESULT, wrappedOutput)
+                val broadcastIntent = Intent(RESULT_BROADCAST)
+                broadcastIntent.putParcelableArrayListExtra(RESULT_BROADCAST, wrappedOutput)
                 sendBroadcast(broadcastIntent)
 
                 //Baby cry, infant cry
                 if (filteredOutput.any { it.label == "Speech" }) {
                     Log.d("Classification", "Detected!!")
                     val smsManager = SmsManager.getDefault()
-                    smsManager.sendTextMessage("5554", null, "ES", null, null)
+                    smsManager.sendTextMessage(
+                        "+48512013073",
+                        null,
+                        preferences.getString("detection_message_text", getString(R.string.detection_default_message)),
+                        null,
+                        null
+                    )
                     stopListening()
                 } else
                     handler.postDelayed(this, CLASSIFICATION_INTERVAL)
@@ -100,13 +108,13 @@ class ClassificationService : Service() {
     }
 
     private fun stopListening() {
-        sendBroadcast(Intent(SERVICE_FINISHED))
         stopSelf()
     }
 
 
     override fun onDestroy() {
         super.onDestroy()
+        sendBroadcast(Intent(FINISHED_BROADCAST))
         audioRecord.stop()
         handler.removeCallbacksAndMessages(null)
     }
@@ -115,21 +123,38 @@ class ClassificationService : Service() {
         return null
     }
 
-    private fun createNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationChannel = NotificationChannel(channelId,"pizda",NotificationManager.IMPORTANCE_HIGH)
-            notificationChannel.enableLights(true)
-            notificationChannel.lightColor = Color.CYAN
-            notificationChannel.enableVibration(false)
-            notificationManager.createNotificationChannel(notificationChannel)
-            notificationBuilder = NotificationCompat.Builder(this, channelId)
-                .setContentTitle("balls")
-                .setContentText("cum")
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.mipmap.ic_launcher))
-            notificationManager.createNotificationChannel(notificationChannel)
-            notificationManager.notify(123,notificationBuilder.build())
-        }else Toast.makeText(this,"api small", Toast.LENGTH_LONG).show()
-        return
+    private fun setupNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "${getString(R.string.app_name)} notification channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            channel.enableLights(true)
+            channel.lightColor = R.color.primaryColor
+            channel.enableVibration(false)
+            channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createNotification(): Notification {
+        val pendingIntent: PendingIntent =
+            Intent(this, MainActivity::class.java).let { notificationIntent ->
+                PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+            }
+
+        val stopIntent = Intent(FINISHED_BROADCAST)
+        val stopPendingIntent: PendingIntent =
+            PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
+
+        return NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentTitle(getString(R.string.notification_content_title))
+            .setSmallIcon(R.drawable.bobo)
+            .setContentIntent(pendingIntent)
+            .addAction(0, getString(R.string.stop), stopPendingIntent)
+            .build()
     }
 }

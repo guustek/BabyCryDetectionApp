@@ -1,9 +1,20 @@
 package com.example.babycrydetectionapp
 
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.provider.Settings
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreference
+
 
 class SettingsActivity : AbstractActivity() {
+    companion object {
+        private const val DO_NOT_DISTURB_REQUEST_CODE = 12345
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -14,11 +25,49 @@ class SettingsActivity : AbstractActivity() {
                 .replace(R.id.settings, SettingsFragment())
                 .commit()
         }
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.title = "Settings"
     }
-    class SettingsFragment : PreferenceFragmentCompat() {
+
+    class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+
+        private val notificationManager by lazy { activity!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+        private lateinit var preferences: SharedPreferences
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            preferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        }
+
+        override fun onSharedPreferenceChanged(p0: SharedPreferences, p1: String?) {
+            if (p1 == "mute_phone" && p0.getBoolean(p1, false)) {
+                preferenceManager.findPreference<SwitchPreference>("mute_phone")?.isChecked = false
+                checkForMutePermissions()
+            }
+        }
+
+        private fun checkForMutePermissions() {
+            if (!notificationManager.isNotificationPolicyAccessGranted) {
+                val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                startActivityForResult(intent, DO_NOT_DISTURB_REQUEST_CODE)
+            } else
+                preferenceManager.findPreference<SwitchPreference>("mute_phone")?.isChecked = true
+        }
+
+        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+            super.onActivityResult(requestCode, resultCode, data)
+            if (requestCode == DO_NOT_DISTURB_REQUEST_CODE && notificationManager.isNotificationPolicyAccessGranted)
+                checkForMutePermissions()
+        }
+
+        override fun onResume() {
+            super.onResume()
+            preferences.registerOnSharedPreferenceChangeListener(this)
+        }
+
+        override fun onPause() {
+            preferences.unregisterOnSharedPreferenceChangeListener(this)
+            super.onPause()
         }
     }
 }

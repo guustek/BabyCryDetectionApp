@@ -2,22 +2,16 @@ package com.example.babycrydetectionapp
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.core.app.NotificationCompat
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,14 +21,13 @@ import com.example.babycrydetectionapp.databinding.ActivityMainBinding
 class MainActivity : AbstractActivity() {
 
     companion object {
-        const val REQUEST_RECORD_AUDIO = 2137
-        const val REQUEST_SEND_SMS = 2115
+        private const val PERMISSIONS_REQUEST_CODE = 2137
     }
-
 
     private lateinit var binding: ActivityMainBinding
     private val probabilitiesAdapter by lazy { ProbabilitiesAdapter() }
     private lateinit var serviceIntent: Intent
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +37,9 @@ class MainActivity : AbstractActivity() {
 
         serviceIntent = Intent(applicationContext, ClassificationService::class.java)
         val intentFilter = IntentFilter()
-        intentFilter.addAction(ClassificationService.CLASSIFICATION_RESULT)
-        intentFilter.addAction(ClassificationService.SERVICE_FINISHED)
+        intentFilter.addAction(ClassificationService.RESULT_BROADCAST)
+        intentFilter.addAction(ClassificationService.FINISHED_BROADCAST)
         registerReceiver(classificationServiceReceiver, intentFilter)
-
-
 
         with(binding) {
             probabilitiesList.apply {
@@ -56,9 +47,8 @@ class MainActivity : AbstractActivity() {
                 layoutManager = LinearLayoutManager(context)
             }
         }
-        // zażądanie pozwolenia na nagrywanie audio
-        requestMicrophonePermission()
-        requestSmsSendingPermission()
+
+        checkPermissions()
 
         binding.classifyButton.setOnClickListener {
             startListening()
@@ -69,7 +59,7 @@ class MainActivity : AbstractActivity() {
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
 //                R.id.menu_tutorial -> startActivity(Intent(this,TutorialActivity::class.java))
-                R.id.menu_contacts -> startActivity(Intent(this,ContactsActivity::class.java))
+                R.id.menu_contacts -> startActivity(Intent(this, ContactsActivity::class.java))
                 R.id.menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -96,7 +86,7 @@ class MainActivity : AbstractActivity() {
     private fun startListening() {
         binding.timer.base = SystemClock.elapsedRealtime()
         binding.timer.start()
-        applicationContext.startService(Intent(this, ClassificationService::class.java))
+        ContextCompat.startForegroundService(this, Intent(this, ClassificationService::class.java))
         binding.classifyButton.setImageResource(R.drawable.rectangle_48dp)
         binding.classifyButton.setOnClickListener { stopListening() }
     }
@@ -104,7 +94,7 @@ class MainActivity : AbstractActivity() {
     private fun stopListening() {
         binding.timer.stop()
         binding.timer.base = SystemClock.elapsedRealtime()
-        applicationContext.stopService(Intent(this, ClassificationService::class.java))
+        stopService(Intent(this, ClassificationService::class.java))
         binding.classifyButton.setImageResource(R.drawable.micro_48dp)
         binding.classifyButton.setOnClickListener { startListening() }
     }
@@ -113,43 +103,42 @@ class MainActivity : AbstractActivity() {
     private val classificationServiceReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                ClassificationService.CLASSIFICATION_RESULT -> {
+                ClassificationService.RESULT_BROADCAST -> {
                     val parcel =
-                        intent.getParcelableArrayListExtra<CategoryAdapter>(ClassificationService.CLASSIFICATION_RESULT)
+                        intent.getParcelableArrayListExtra<CategoryAdapter>(ClassificationService.RESULT_BROADCAST)
                     val categories = parcel!!.map { it.wrappedCategory() }
                     runOnUiThread {
                         probabilitiesAdapter.categoryList = categories
                         probabilitiesAdapter.notifyDataSetChanged()
                     }
                 }
-                ClassificationService.SERVICE_FINISHED -> stopListening()
+                ClassificationService.FINISHED_BROADCAST -> stopListening()
             }
         }
     }
 
-    private fun requestMicrophonePermission() {
-        if (ContextCompat.checkSelfPermission(
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+            == PackageManager.PERMISSION_GRANTED
+        )
+            Log.d("Permissions", "Permissions already granted")
+        else {
+            ActivityCompat.requestPermissions(
                 this,
-                Manifest.permission.RECORD_AUDIO
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d("Permissions", "Microphone permission granted")
-        } else {
-            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_RECORD_AUDIO)
+                arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.SEND_SMS),
+                PERMISSIONS_REQUEST_CODE
+            )
         }
     }
 
-    private fun requestSmsSendingPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.SEND_SMS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d("Permissions", "Sms sending permission granted")
-        } else {
-            requestPermissions(arrayOf(Manifest.permission.SEND_SMS), REQUEST_SEND_SMS)
-        }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        if (requestCode == PERMISSIONS_REQUEST_CODE) {
+//            if (grantResults.any { it != PackageManager.PERMISSION_GRANTED }) {
+//                TODO("Co jak madka nie pozwoli na nagrywanie dźwięku i sms")
+//            }
+//        }
     }
-
-
 }
