@@ -31,6 +31,7 @@ class ClassificationService : Service() {
         private const val SERVICE_ID = 420
     }
 
+    private lateinit var handlerThread: HandlerThread
     private lateinit var preferences: SharedPreferences
     private val audioClassifier: AudioClassifier by lazy { AudioClassifier.createFromFile(this, MODEL_FILE) }
     private lateinit var audioRecord: AudioRecord
@@ -46,7 +47,7 @@ class ClassificationService : Service() {
         setupNotificationChannel()
 
         // utworzenie handlera oddzielnego wątku klasyfikacji
-        val handlerThread = HandlerThread("classificationThread")
+        handlerThread = HandlerThread("classificationThread")
         handlerThread.start()
         handler = HandlerCompat.createAsync(handlerThread.looper)
     }
@@ -94,7 +95,7 @@ class ClassificationService : Service() {
                         null,
                         null
                     )
-                    stopListening()
+                    sendBroadcast(Intent(FINISHED_BROADCAST))
                 } else
                     handler.postDelayed(this, CLASSIFICATION_INTERVAL)
 
@@ -107,15 +108,10 @@ class ClassificationService : Service() {
         handler.post(classification)
     }
 
-    private fun stopListening() {
-        stopSelf()
-    }
-
-
     override fun onDestroy() {
         super.onDestroy()
-        sendBroadcast(Intent(FINISHED_BROADCAST))
         audioRecord.stop()
+        handlerThread.quit()
         handler.removeCallbacksAndMessages(null)
     }
 
@@ -140,7 +136,7 @@ class ClassificationService : Service() {
     }
 
     private fun createNotification(): Notification {
-        val pendingIntent: PendingIntent =
+        val openPendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
             }
@@ -153,8 +149,7 @@ class ClassificationService : Service() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentTitle(getString(R.string.notification_content_title))
             .setSmallIcon(R.drawable.bobo)
-            .setContentIntent(pendingIntent)
-            .setWhen(0)
+            .setContentIntent(openPendingIntent)
             .addAction(0, getString(R.string.stop), stopPendingIntent)
             .build()
     }
