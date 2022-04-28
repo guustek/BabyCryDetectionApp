@@ -137,13 +137,17 @@ class ClassificationService : Service() {
 
     private fun createNotification(): Notification {
         val openPendingIntent: PendingIntent =
-            Intent(this, MainActivity::class.java).let { notificationIntent ->
-                PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+            Intent(applicationContext, MainActivity::class.java)
+                .apply { flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP }
+                .let { notificationIntent ->
+                    PendingIntent.getActivity(applicationContext, 666, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                }
+
+        val stopPendingIntent: PendingIntent =
+            Intent(FINISHED_BROADCAST).let { stopIntent ->
+                PendingIntent.getBroadcast(applicationContext, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
             }
 
-        val stopIntent = Intent(FINISHED_BROADCAST)
-        val stopPendingIntent: PendingIntent =
-            PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
 
         return NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
