@@ -41,23 +41,23 @@ class SettingsActivity : AbstractActivity() {
 
         override fun onSharedPreferenceChanged(p0: SharedPreferences, p1: String?) {
             if (p1 == "mute_phone" && p0.getBoolean(p1, false)) {
-                preferenceManager.findPreference<SwitchPreference>("mute_phone")?.isChecked = false
                 checkForMutePermissions()
             }
         }
 
         private fun checkForMutePermissions() {
             if (!notificationManager.isNotificationPolicyAccessGranted) {
+                preferenceManager.findPreference<SwitchPreference>("mute_phone")?.isChecked = false
                 val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
                 startActivityForResult(intent, DO_NOT_DISTURB_REQUEST_CODE)
-            } else
-                preferenceManager.findPreference<SwitchPreference>("mute_phone")?.isChecked = true
+            }
         }
 
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
             super.onActivityResult(requestCode, resultCode, data)
-            if (requestCode == DO_NOT_DISTURB_REQUEST_CODE && notificationManager.isNotificationPolicyAccessGranted)
-                checkForMutePermissions()
+            if (requestCode == DO_NOT_DISTURB_REQUEST_CODE && notificationManager.isNotificationPolicyAccessGranted) {
+                preferenceManager.findPreference<SwitchPreference>("mute_phone")?.isChecked = true
+            }
         }
 
         override fun onResume() {

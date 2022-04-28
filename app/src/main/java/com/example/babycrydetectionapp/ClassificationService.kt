@@ -154,6 +154,7 @@ class ClassificationService : Service() {
             .setContentTitle(getString(R.string.notification_content_title))
             .setSmallIcon(R.drawable.bobo)
             .setContentIntent(pendingIntent)
+            .setWhen(0)
             .addAction(0, getString(R.string.stop), stopPendingIntent)
             .build()
     }
