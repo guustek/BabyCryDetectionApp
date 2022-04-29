@@ -13,5 +13,6 @@
     <color name="main_background">#E4D0A7</color>
     <color name="primaryColor">#FF5722</color>
     <color name="primaryColorDark">#D55228</color>
+    <color name="cardBackgroundColor">#AC9A73</color>
 
 </resources>

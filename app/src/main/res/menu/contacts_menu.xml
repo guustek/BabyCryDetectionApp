@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/contacts_menu_search"
+        android:icon="@drawable/search_24"
+        android:title="@string/search_contact"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/contacts_menu_import"
+        android:title="@string/import_from_phone"
+        app:showAsAction="always"
+        android:icon="@drawable/import_contacts_24" />
+    <item
+        android:id="@+id/contacts_menu_add"
+        android:title="@string/add_contact"
+        app:showAsAction="always"
+        android:icon="@drawable/add_24" />
+</menu>

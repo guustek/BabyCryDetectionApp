@@ -13,9 +13,11 @@ import android.os.HandlerThread
 import android.os.IBinder
 import android.telephony.SmsManager
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.os.HandlerCompat
 import androidx.preference.PreferenceManager
+import com.google.android.material.snackbar.Snackbar
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 
 
@@ -88,13 +90,23 @@ class ClassificationService : Service() {
                 if (filteredOutput.any { it.label == "Speech" }) {
                     Log.d("Classification", "Detected!!")
                     val smsManager = SmsManager.getDefault()
-                    smsManager.sendTextMessage(
-                        "+48512013073",
-                        null,
-                        preferences.getString("detection_message_text", getString(R.string.detection_default_message)),
-                        null,
-                        null
-                    )
+                    val number = preferences.getString("number", "")
+                    try {
+                        smsManager.sendTextMessage(
+                            number,
+                            null,
+                            preferences.getString(
+                                "detection_message_text",
+                                getString(R.string.detection_default_message)
+                            ),
+                            null,
+                            null
+                        )
+                    } catch (e: IllegalArgumentException) {
+                        e.printStackTrace()
+                        Toast.makeText(applicationContext, "Number is empty or null", Snackbar.LENGTH_LONG).show()
+                    }
+
                     sendBroadcast(Intent(FINISHED_BROADCAST))
                 } else
                     handler.postDelayed(this, CLASSIFICATION_INTERVAL)
@@ -140,7 +152,12 @@ class ClassificationService : Service() {
             Intent(applicationContext, MainActivity::class.java)
                 .apply { flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP }
                 .let { notificationIntent ->
-                    PendingIntent.getActivity(applicationContext, 666, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    PendingIntent.getActivity(
+                        applicationContext,
+                        666,
+                        notificationIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
                 }
 
         val stopPendingIntent: PendingIntent =
@@ -154,6 +171,8 @@ class ClassificationService : Service() {
             .setContentTitle(getString(R.string.notification_content_title))
             .setSmallIcon(R.drawable.bobo)
             .setContentIntent(openPendingIntent)
+            .setOngoing(true)
+            .setSilent(true)
             .addAction(0, getString(R.string.stop), stopPendingIntent)
             .build()
     }

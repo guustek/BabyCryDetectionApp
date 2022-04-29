@@ -36,7 +36,7 @@ class SettingsActivity : AbstractActivity() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
-            preferences = PreferenceManager.getDefaultSharedPreferences(activity)
+            preferences = PreferenceManager.getDefaultSharedPreferences(activity!!)
         }
 
         override fun onSharedPreferenceChanged(p0: SharedPreferences, p1: String?) {

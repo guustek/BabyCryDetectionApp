@@ -17,7 +17,6 @@
         app:menu="@menu/main_menu" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -41,7 +40,7 @@
                 android:contentDescription="@string/open_menu"
                 android:minWidth="48dp"
                 android:minHeight="48dp"
-                android:src="@drawable/menu_button" />
+                android:src="@drawable/menu_button_36" />
 
         </androidx.appcompat.widget.Toolbar>
 

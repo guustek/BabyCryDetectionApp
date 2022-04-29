@@ -3,6 +3,12 @@
 
     <PreferenceCategory app:title="@string/message_preferences_header">
         <EditTextPreference
+            app:key="number"
+            app:title="Number"
+            app:useSimpleSummaryProvider="true"
+            android:inputType="phone"/>
+
+        <EditTextPreference
             app:key="detection_message_text"
             app:title="@string/detection_message_preference_title"
             android:defaultValue="@string/detection_default_message"
