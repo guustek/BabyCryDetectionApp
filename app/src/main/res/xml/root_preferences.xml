@@ -2,11 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/message_preferences_header">
-        <EditTextPreference
-            app:key="number"
-            app:title="Number"
-            app:useSimpleSummaryProvider="true"
-            android:inputType="phone"/>
 
         <EditTextPreference
             app:key="detection_message_text"
@@ -27,7 +22,7 @@
             android:key="night_mode"
             android:title="@string/night_mode_preference_title" />
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="display_results"
             android:title="@string/display_classification_results_preference_title" />
 

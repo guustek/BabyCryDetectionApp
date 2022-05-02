@@ -1,6 +1,9 @@
 package com.example.babycrydetectionapp
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -16,12 +19,15 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.os.HandlerCompat
+import androidx.lifecycle.LifecycleService
 import androidx.preference.PreferenceManager
+import com.example.babycrydetectionapp.contacts.ContactsViewModel
+import com.example.babycrydetectionapp.contacts.JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych
 import com.google.android.material.snackbar.Snackbar
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 
 
-class ClassificationService : Service() {
+class ClassificationService : LifecycleService() {
 
     companion object {
         private const val MODEL_FILE = "yamnet.tflite"
@@ -38,11 +44,11 @@ class ClassificationService : Service() {
     private val audioClassifier: AudioClassifier by lazy { AudioClassifier.createFromFile(this, MODEL_FILE) }
     private lateinit var audioRecord: AudioRecord
     private lateinit var handler: Handler
+    private val contactsViewModel: ContactsViewModel = ContactsViewModel()
 
 
     override fun onCreate() {
         super.onCreate()
-
         // utworzenie audio rekordera na podstawie formatu wymaganego przez klasyfikator
         audioRecord = audioClassifier.createAudioRecord()
         preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
@@ -55,9 +61,10 @@ class ClassificationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("XD", contactsViewModel.contacts.value.toString())
         startListening()
         startForeground(SERVICE_ID, createNotification())
-        return START_REDELIVER_INTENT
+        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun startListening() {
@@ -74,14 +81,14 @@ class ClassificationService : Service() {
                 tensorAudio.load(audioRecord)
                 // klasyfikacja
                 val output = audioClassifier.classify(tensorAudio)
-                // filtrowanie (tylko kategorie z prawdopodobieństwem > 0.3)
+                // filtrowanie (kategorie z prawdopodobieństwem > 0.3)
                 val filteredOutput = output[0].categories.filter {
                     it.score > MINIMUM_DISPLAY_THRESHOLD
                 }.sortedBy {
                     -it.score
                 }
 
-                val wrappedOutput = ArrayList(filteredOutput.map { category -> CategoryAdapter(category) })
+                val wrappedOutput = ArrayList(filteredOutput.map { category -> CategoryWrapper(category) })
                 val broadcastIntent = Intent(RESULT_BROADCAST)
                 broadcastIntent.putParcelableArrayListExtra(RESULT_BROADCAST, wrappedOutput)
                 sendBroadcast(broadcastIntent)
@@ -90,23 +97,25 @@ class ClassificationService : Service() {
                 if (filteredOutput.any { it.label == "Speech" }) {
                     Log.d("Classification", "Detected!!")
                     val smsManager = SmsManager.getDefault()
-                    val number = preferences.getString("number", "")
-                    try {
-                        smsManager.sendTextMessage(
-                            number,
-                            null,
-                            preferences.getString(
-                                "detection_message_text",
-                                getString(R.string.detection_default_message)
-                            ),
-                            null,
-                            null
-                        )
-                    } catch (e: IllegalArgumentException) {
-                        e.printStackTrace()
-                        Toast.makeText(applicationContext, "Number is empty or null", Snackbar.LENGTH_LONG).show()
+                    val contacts = JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data
+                    for (contact in contacts) {
+                        try {
+                            smsManager.sendTextMessage(
+                                contact.number,
+                                null,
+                                preferences.getString(
+                                    "detection_message_text",
+                                    getString(R.string.detection_default_message)
+                                ),
+                                null,
+                                null
+                            )
+                        } catch (e: IllegalArgumentException) {
+                            e.printStackTrace()
+                            Log.d("Classification service", "Problem with number -${contact.number}")
+                            Toast.makeText(applicationContext, "Number is empty or null", Snackbar.LENGTH_LONG).show()
+                        }
                     }
-
                     sendBroadcast(Intent(FINISHED_BROADCAST))
                 } else
                     handler.postDelayed(this, CLASSIFICATION_INTERVAL)

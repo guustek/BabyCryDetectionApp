@@ -1,4 +1,4 @@
-package com.example.babycrydetectionapp
+package com.example.babycrydetectionapp.contacts
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,27 +8,23 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.example.babycrydetectionapp.databinding.ContactsItemViewBinding
 
-class ContactsAdapter(data: MutableList<Contact>) : RecyclerView.Adapter<ContactsAdapter.ContactHolder>(), Filterable {
+class ContactsAdapter(private val contactsViewModel: ContactsViewModel) :
+    RecyclerView.Adapter<ContactsAdapter.ContactHolder>(), Filterable {
 
 
-    private var contactsNumbers: MutableList<Contact>
-    private var contactNumbersFull: MutableList<Contact>
+    var contactsNumbers: MutableList<Contact> = ArrayList(contactsViewModel.contacts.value!!)
+    var contactNumbersFull: List<Contact> = contactsViewModel.contacts.value!!
     private var lastFilter: CharSequence = ""
-
-    init {
-        contactNumbersFull = data
-        contactsNumbers = ArrayList(data)
-    }
 
     private lateinit var binding: ContactsItemViewBinding
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactHolder {
         binding = ContactsItemViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ContactHolder(binding)
+        return ContactHolder(binding, contactsViewModel, this)
     }
 
     override fun onBindViewHolder(holder: ContactHolder, position: Int) {
-        holder.bind(contactsNumbers[position])
+        holder.bind(contactsNumbers[position], position)
     }
 
     override fun getItemCount(): Int {
@@ -39,12 +35,13 @@ class ContactsAdapter(data: MutableList<Contact>) : RecyclerView.Adapter<Contact
         return contactFilter
     }
 
-    fun notifyNewContactAdded() {
+    fun refresh() {
+        contactNumbersFull = contactsViewModel.contacts.value!!
         contactsNumbers.clear()
         contactsNumbers.addAll(contactNumbersFull)
         filter.filter(lastFilter)
-        notifyItemInserted(contactNumbersFull.size)
     }
+
 
     private val contactFilter = object : Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
@@ -68,11 +65,23 @@ class ContactsAdapter(data: MutableList<Contact>) : RecyclerView.Adapter<Contact
 
     }
 
-    class ContactHolder(private val binding: ContactsItemViewBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(currentItem: Contact) {
+    class ContactHolder(
+        private val binding: ContactsItemViewBinding,
+        private val contactsViewModel: ContactsViewModel,
+        private val adapter: ContactsAdapter
+    ) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(currentItem: Contact, position: Int) {
             binding.contactName.text = currentItem.name
             binding.contactNumber.text = currentItem.number
+            binding.deleteButton.setOnClickListener {
+                contactsViewModel.contacts.value = contactsViewModel.contacts.value!!.minus(currentItem)
+                JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data =  contactsViewModel.contacts.value!!
+                adapter.notifyItemRemoved(position)
+                adapter.refresh()
+            }
         }
+
 
     }
 

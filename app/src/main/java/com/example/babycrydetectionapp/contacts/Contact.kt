@@ -1,4 +1,4 @@
-package com.example.babycrydetectionapp
+package com.example.babycrydetectionapp.contacts
 
 import android.graphics.drawable.Drawable
 

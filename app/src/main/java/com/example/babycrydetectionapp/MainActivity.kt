@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.babycrydetectionapp.contacts.ContactsActivity
 import com.example.babycrydetectionapp.databinding.ActivityMainBinding
 
 
@@ -105,7 +106,7 @@ class MainActivity : AbstractActivity() {
             when (intent.action) {
                 ClassificationService.RESULT_BROADCAST -> {
                     val parcel =
-                        intent.getParcelableArrayListExtra<CategoryAdapter>(ClassificationService.RESULT_BROADCAST)
+                        intent.getParcelableArrayListExtra<CategoryWrapper>(ClassificationService.RESULT_BROADCAST)
                     val categories = parcel!!.map { it.wrappedCategory() }
                     runOnUiThread {
                         probabilitiesAdapter.categoryList = categories

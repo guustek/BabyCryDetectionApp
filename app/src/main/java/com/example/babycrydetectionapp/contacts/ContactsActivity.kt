@@ -1,26 +1,32 @@
-package com.example.babycrydetectionapp
+package com.example.babycrydetectionapp.contacts
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.SearchView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.babycrydetectionapp.R
 import com.example.babycrydetectionapp.databinding.ContactsActivityBinding
 
 
 class ContactsActivity : AppCompatActivity() {
 
     private lateinit var binding: ContactsActivityBinding
-    private var list = mutableListOf(Contact("Emulator", "5544", null), Contact("Paweł", "+48512013073", null))
+    private val contactsViewModel: ContactsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ContactsActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        contactsViewModel.contacts.value =
+            JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data
 
         setupRecyclerView()
         setupToolbarMenu()
@@ -54,14 +60,25 @@ class ContactsActivity : AppCompatActivity() {
                         .setCancelable(true)
                         .setView(R.layout.add_contact_dialog)
                         .create()
-                    dialog.setButton(AlertDialog.BUTTON_POSITIVE,getString(R.string.add)) { _: DialogInterface, _: Int ->
+                    dialog.setButton(
+                        AlertDialog.BUTTON_POSITIVE,
+                        getString(R.string.add)
+                    ) { _: DialogInterface, _: Int ->
                         val name = dialog.findViewById<EditText>(R.id.name_input)!!.text.toString()
                         val number = dialog.findViewById<EditText>(R.id.number_input)!!.text.toString()
-                        val newContact = Contact(name, number,null)
-                        list.add(newContact)
-                        (binding.contactsRecyclerView.adapter as ContactsAdapter).notifyNewContactAdded()
+                        val newContact = Contact(name, number, null)
+                        contactsViewModel.contacts.value = contactsViewModel.contacts.value!!.plus(newContact)
+                        JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data =
+                            contactsViewModel.contacts.value!!
+                        Log.d("XD", contactsViewModel.contacts.value.toString())
+                        val adapter = binding.contactsRecyclerView.adapter as ContactsAdapter
+                        adapter.notifyItemInserted(adapter.itemCount)
+                        adapter.refresh()
                     }
-                    dialog.setButton(AlertDialog.BUTTON_NEGATIVE,getString(R.string.cancel)) { _: DialogInterface, _: Int ->
+                    dialog.setButton(
+                        AlertDialog.BUTTON_NEGATIVE,
+                        getString(R.string.cancel)
+                    ) { _: DialogInterface, _: Int ->
                         dialog.dismiss()
                     }
                     dialog.show()
@@ -81,7 +98,7 @@ class ContactsActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         binding.contactsRecyclerView.apply {
             layoutManager = LinearLayoutManager(applicationContext)
-            adapter = ContactsAdapter(list)
+            adapter = ContactsAdapter(contactsViewModel)
             addItemDecoration(
                 DividerItemDecoration(
                     context,

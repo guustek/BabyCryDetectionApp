@@ -32,6 +32,7 @@
     <string name="cancel">Cancel</string>
     <string name="name">Name</string>
     <string name="phone_number">Phone number</string>
+    <string name="delete">delete</string>
 
 
 </resources>

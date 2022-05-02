@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import org.tensorflow.lite.support.label.Category
 
-class CategoryAdapter : Parcelable {
+class CategoryWrapper : Parcelable {
 
     private var index = 0
     private var label: String? = null
@@ -39,12 +39,12 @@ class CategoryAdapter : Parcelable {
     }
 
 
-    companion object CREATOR : Parcelable.Creator<CategoryAdapter> {
-        override fun createFromParcel(parcel: Parcel): CategoryAdapter {
-            return CategoryAdapter(parcel)
+    companion object CREATOR : Parcelable.Creator<CategoryWrapper> {
+        override fun createFromParcel(parcel: Parcel): CategoryWrapper {
+            return CategoryWrapper(parcel)
         }
 
-        override fun newArray(size: Int): Array<CategoryAdapter?> {
+        override fun newArray(size: Int): Array<CategoryWrapper?> {
             return arrayOfNulls(size)
         }
     }
