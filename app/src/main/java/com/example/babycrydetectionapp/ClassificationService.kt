@@ -181,6 +181,7 @@ class ClassificationService : LifecycleService() {
             .setSmallIcon(R.drawable.bobo)
             .setContentIntent(openPendingIntent)
             .setOngoing(true)
+            .setVisibility(Notification.VISIBILITY_PUBLIC)
             .setSilent(true)
             .addAction(0, getString(R.string.stop), stopPendingIntent)
             .build()
