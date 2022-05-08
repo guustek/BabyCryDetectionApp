@@ -21,7 +21,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.os.HandlerCompat
 import androidx.lifecycle.LifecycleService
 import androidx.preference.PreferenceManager
-import com.example.babycrydetectionapp.contacts.ContactsViewModel
 import com.example.babycrydetectionapp.contacts.JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych
 import com.google.android.material.snackbar.Snackbar
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
@@ -44,8 +43,6 @@ class ClassificationService : LifecycleService() {
     private val audioClassifier: AudioClassifier by lazy { AudioClassifier.createFromFile(this, MODEL_FILE) }
     private lateinit var audioRecord: AudioRecord
     private lateinit var handler: Handler
-    private val contactsViewModel: ContactsViewModel = ContactsViewModel()
-
 
     override fun onCreate() {
         super.onCreate()
@@ -61,7 +58,6 @@ class ClassificationService : LifecycleService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("XD", contactsViewModel.contacts.value.toString())
         startListening()
         startForeground(SERVICE_ID, createNotification())
         return super.onStartCommand(intent, flags, startId)
@@ -94,7 +90,7 @@ class ClassificationService : LifecycleService() {
                 sendBroadcast(broadcastIntent)
 
                 //Baby cry, infant cry
-                if (filteredOutput.any { it.label == "Speech" }) {
+                if (filteredOutput.any { it.label == "Baby cry, infant cry" }) {
                     Log.d("Classification", "Detected!!")
                     val smsManager = SmsManager.getDefault()
                     val contacts = JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data
@@ -113,7 +109,11 @@ class ClassificationService : LifecycleService() {
                         } catch (e: IllegalArgumentException) {
                             e.printStackTrace()
                             Log.d("Classification service", "Problem with number -${contact.number}")
-                            Toast.makeText(applicationContext, "Number is empty or null", Snackbar.LENGTH_LONG).show()
+                            Toast.makeText(
+                                applicationContext,
+                                "Problem with number -${contact.number}",
+                                Snackbar.LENGTH_LONG
+                            ).show()
                         }
                     }
                     sendBroadcast(Intent(FINISHED_BROADCAST))
@@ -176,7 +176,7 @@ class ClassificationService : LifecycleService() {
 
 
         return NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentTitle(getString(R.string.notification_content_title))
             .setSmallIcon(R.drawable.bobo)
             .setContentIntent(openPendingIntent)
