@@ -17,6 +17,7 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.babycrydetectionapp.contacts.ContactsActivity
 import com.example.babycrydetectionapp.databinding.ActivityMainBinding
+import com.example.babycrydetectionapp.tutorial.TutorialActivity
 
 
 class MainActivity : AbstractActivity() {
@@ -59,7 +60,7 @@ class MainActivity : AbstractActivity() {
 
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
-//                R.id.menu_tutorial -> startActivity(Intent(this,TutorialActivity::class.java))
+                R.id.menu_tutorial -> startActivity(Intent(this, TutorialActivity::class.java))
                 R.id.menu_contacts -> startActivity(Intent(this, ContactsActivity::class.java))
                 R.id.menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             }
