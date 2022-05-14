@@ -31,12 +31,12 @@ class SettingsActivity : AbstractActivity() {
 
     class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-        private val notificationManager by lazy { activity!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+        private val notificationManager by lazy { requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
         private lateinit var preferences: SharedPreferences
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
-            preferences = PreferenceManager.getDefaultSharedPreferences(activity!!)
+            preferences = PreferenceManager.getDefaultSharedPreferences(requireActivity())
         }
 
         override fun onSharedPreferenceChanged(p0: SharedPreferences, p1: String?) {

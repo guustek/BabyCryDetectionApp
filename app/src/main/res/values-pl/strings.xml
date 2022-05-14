@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_drawer_open">Otwórz menu nawigacji</string>
+    <string name="navigation_drawer_close">Zamknij menu nawigacji</string>
+    <string name="notification_content_title">BabyCryDetector słucha…</string>
+
+    <string name="tutorial">Poradnik</string>
+    <string name="contacts">Kontakty</string>
+    <string name="settings">Ustawienia</string>
+
+    <string name="open_menu">Otwórz menu</string>
+    <string name="listen_stop">Słuchaj/Stop</string>
+
+    <!-- Preference Headers -->
+    <string name="message_preferences_header">Wiadomość</string>
+    <string name="view_preferences_header">Widok</string>
+
+    <!-- Messages Preferences -->
+    <string name="detection_message_preference_title">Treść wiadomości po wykryciu płaczu</string>
+    <string name="detection_default_message">Wykryto płacz dziecka!</string>
+
+    <!--Display Preferences-->
+    <string name="night_mode_preference_title">Tryb nocny</string>
+    <string name="display_classification_results_preference_title">Wyświetl rezultat klasyfikacji</string>
+    <string name="display_timer_preference_title">Wyświetl stoper</string>
+    <string name="stop">Stop</string>
+    <string name="import_from_phone">Importuj z telefonu</string>
+    <string name="add_contact">Dodaj kontakt</string>
+    <string name="contact_image">Obrazek contactu</string>
+    <string name="search_contact">Szukaj kontaktu</string>
+    <string name="add">Dodaj</string>
+    <string name="cancel">Anuluj</string>
+    <string name="name">Nazwa</string>
+    <string name="phone_number">Numer telefonu</string>
+    <string name="delete">usuń</string>
+    <string name="previous">Poprzedni</string>
+    <string name="next">Następny</string>
+</resources>
