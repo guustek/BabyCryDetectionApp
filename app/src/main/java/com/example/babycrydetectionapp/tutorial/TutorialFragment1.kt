@@ -17,6 +17,6 @@ class TutorialFragment1 : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.findViewById<TextView>(R.id.textView).setText("jebać")
+        view.findViewById<TextView>(R.id.textView).text = "jebać"
     }
 }

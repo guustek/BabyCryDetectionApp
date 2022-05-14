@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/tutorial_navigate_previous"
+        android:title="@string/previous"
+        android:enabled="true"
+        android:icon="@drawable/previous_24"/>
+    <item
+        android:id="@+id/tutorial_navigate_next"
+        android:title="@string/next"
+        android:enabled="true"
+        android:icon="@drawable/next_24"/>
+</menu>
