@@ -9,7 +9,6 @@ import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,7 +31,7 @@ class ContactsActivity : AppCompatActivity() {
         contactsViewModel.contacts.value =
             JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data
 
-        //mContactViewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
+        mContactViewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
 
         setupRecyclerView()
         setupToolbarMenu()

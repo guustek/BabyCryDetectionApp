@@ -10,7 +10,7 @@ import androidx.room.Query
 interface ContactDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addContact(contact: Contact)
+    fun addContact(contact: Contact)
 
     @Query("SELECT * FROM contact_table ORDER BY name ASC")
     fun getAllContacts(): LiveData<List<Contact>>
