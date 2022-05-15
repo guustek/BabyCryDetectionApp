@@ -10,7 +10,7 @@ import com.example.babycrydetectionapp.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 
-private const val NUM_PAGES = 5
+private const val NUM_PAGES = 2
 
 class TutorialActivity : AppCompatActivity() {
 
@@ -62,9 +62,6 @@ class TutorialActivity : AppCompatActivity() {
         override fun createFragment(position: Int): Fragment {
             if (position == 0) return TutorialFragment1()
             if (position == 1) return TutorialFragment2()
-            if (position == 2) return TutorialFragment3()
-            if (position == 3) return TutorialFragment4()
-            if (position == 4) return TutorialFragment5()
             return TutorialFragment1()
         }
     }

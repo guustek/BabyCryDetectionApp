@@ -35,4 +35,14 @@
     <string name="delete">usuń</string>
     <string name="previous">Poprzedni</string>
     <string name="next">Następny</string>
+    <string name="Menu_Button">Przycisk menu</string>
+    <string name="Starts_listening_for_baby_cry">Rozpoczyna nasłuchiwać\npłaczu dziecka</string>
+    <string name="Navigation_menu">Menu Nawigacyjne</string>
+    <string name="Timer">Licznik</string>
+    <string name="timer_message">Mieży jak długo\nzajeło aplikacji\nwykrycie płaczu dziecka</string>
+    <string name="Start_Button">Przycisk start</string>
+    <string name="Add_button">Przycisk dodawania</string>
+    <string name="Used_for_adding_contacts">Służy do dodawania\nkontaktów</string>
+    <string name="Import_button">Przycisk importu</string>
+    <string name="Used_for_importing">Służy do importowania\nkontaktów z telefonu</string>
 </resources>
