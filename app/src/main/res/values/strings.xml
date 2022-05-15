@@ -33,6 +33,11 @@
     <string name="name">Name</string>
     <string name="phone_number">Phone number</string>
     <string name="delete">delete</string>
+    <string name="name_is_empty">Name is empty!</string>
+    <string name="invalid_number">Invalid number!</string>
+    <string name="edit_contact">Edit contact</string>
+    <string name="ok">OK</string>
+    <string name="number_exists">This number is already saved!</string>
 
 
 </resources>

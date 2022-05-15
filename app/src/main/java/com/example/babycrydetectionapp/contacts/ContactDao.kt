@@ -1,18 +1,19 @@
 package com.example.babycrydetectionapp.contacts
 
-import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface ContactDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addContact(contact: Contact)
+    fun addContact(contact: Contact)
 
     @Query("SELECT * FROM contact_table ORDER BY name ASC")
-    fun getAllContacts(): LiveData<List<Contact>>
+    fun getAllContacts(): List<Contact>
 
+    @Delete
+    fun deleteContact(contact: Contact)
+
+//    @Update
+//    fun editContact(contact: Contact)
 }

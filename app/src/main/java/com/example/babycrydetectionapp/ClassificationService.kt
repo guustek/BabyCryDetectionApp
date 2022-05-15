@@ -21,7 +21,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.os.HandlerCompat
 import androidx.lifecycle.LifecycleService
 import androidx.preference.PreferenceManager
-import com.example.babycrydetectionapp.contacts.JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych
+import com.example.babycrydetectionapp.contacts.ContactDatabase
 import com.google.android.material.snackbar.Snackbar
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 
@@ -90,10 +90,10 @@ class ClassificationService : LifecycleService() {
                 sendBroadcast(broadcastIntent)
 
                 //Baby cry, infant cry
-                if (filteredOutput.any { it.label == "Baby cry, infant cry" }) {
+                if (filteredOutput.any { it.label == "Speech" }) {
                     Log.d("Classification", "Detected!!")
                     val smsManager = SmsManager.getDefault()
-                    val contacts = JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data
+                    val contacts = ContactDatabase.getDatabase(applicationContext).contactDao().getAllContacts()
                     for (contact in contacts) {
                         try {
                             smsManager.sendTextMessage(
