@@ -1,7 +1,11 @@
 package com.example.babycrydetectionapp.contacts
 
+import android.Manifest
 import android.content.DialogInterface
+import android.content.pm.PackageManager
+import android.database.Cursor
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -9,6 +13,8 @@ import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.babycrydetectionapp.R
@@ -16,6 +22,10 @@ import com.example.babycrydetectionapp.databinding.ContactsActivityBinding
 
 
 class ContactsActivity : AppCompatActivity() {
+
+    companion object {
+        const val READ_CONTACTS_PERMISSION_REQUEST_CODE = 997
+    }
 
     private lateinit var binding: ContactsActivityBinding
     private val contactsViewModel: ContactsViewModel by viewModels()
@@ -30,6 +40,49 @@ class ContactsActivity : AppCompatActivity() {
 
         setupRecyclerView()
         setupToolbarMenu()
+
+    }
+
+    private fun getContactList() {
+        val cr = contentResolver
+        val cursor: Cursor? = cr.query(
+            ContactsContract.Contacts.CONTENT_URI,
+            null, null, null, null
+        )
+        if ((cursor?.count ?: 0) > 0) {
+            while (cursor != null && cursor.moveToNext()) {
+                val id: String = cursor.getString(
+                    cursor.getColumnIndex(ContactsContract.Contacts._ID)
+                )
+                val name: String = cursor.getString(
+                    cursor.getColumnIndex(
+                        ContactsContract.Contacts.DISPLAY_NAME
+                    )
+                )
+                if (cursor.getInt(
+                        cursor.getColumnIndex(
+                            ContactsContract.Contacts.HAS_PHONE_NUMBER
+                        )
+                    ) > 0
+                ) {
+                    val pCur: Cursor? = cr.query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", arrayOf(id), null
+                    )
+                    while (pCur!!.moveToNext()) {
+                        val phoneNo = pCur.getString(
+                            pCur.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Phone.NUMBER
+                            )
+                        )
+                    }
+                    println(name)
+                    pCur.close()
+                }
+            }
+        }
+
 
     }
 
@@ -85,6 +138,18 @@ class ContactsActivity : AppCompatActivity() {
                     true
                 }
                 R.id.contacts_menu_import -> {
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+                        == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        Log.d("Permissions", "Permission already granted")
+                        getContactList()
+                    } else {
+                        ActivityCompat.requestPermissions(
+                            this,
+                            arrayOf(Manifest.permission.READ_CONTACTS),
+                            READ_CONTACTS_PERMISSION_REQUEST_CODE
+                        )
+                    }
                     true
                 }
                 else -> {
@@ -105,6 +170,15 @@ class ContactsActivity : AppCompatActivity() {
                     DividerItemDecoration.VERTICAL
                 )
             )
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == READ_CONTACTS_PERMISSION_REQUEST_CODE) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                getContactList()
+            }
         }
     }
 }
