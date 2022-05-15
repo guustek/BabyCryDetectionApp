@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class ContactViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val allContacts : LiveData<List<Contact>>
+    val allContacts : LiveData<List<Contact>>
     private val repository : ContactRepository
 
     init {

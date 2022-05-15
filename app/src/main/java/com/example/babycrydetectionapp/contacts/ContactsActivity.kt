@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,10 +31,12 @@ class ContactsActivity : AppCompatActivity() {
         binding = ContactsActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        contactsViewModel.contacts.value =
-            JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data
 
         mContactViewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
+
+
+        contactsViewModel.contacts.value =
+            JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data
 
         setupRecyclerView()
         setupToolbarMenu()
@@ -79,10 +82,12 @@ class ContactsActivity : AppCompatActivity() {
                             // Create Contact
 
                             mContactViewModel.addContact(newContact)
+
                             contactsViewModel.contacts.value = contactsViewModel.contacts.value!!.plus(newContact)
                             JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data =
                                 contactsViewModel.contacts.value!!
                             Log.d("XD", contactsViewModel.contacts.value.toString())
+
                             val adapter = binding.contactsRecyclerView.adapter as ContactsAdapter
                             adapter.notifyItemInserted(adapter.itemCount)
                             adapter.refresh()
