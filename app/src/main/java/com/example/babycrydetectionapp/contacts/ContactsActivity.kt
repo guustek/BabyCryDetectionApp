@@ -9,6 +9,8 @@ import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.babycrydetectionapp.R
@@ -20,6 +22,8 @@ class ContactsActivity : AppCompatActivity() {
     private lateinit var binding: ContactsActivityBinding
     private val contactsViewModel: ContactsViewModel by viewModels()
 
+    private lateinit var mContactViewModel: ContactViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ContactsActivityBinding.inflate(layoutInflater)
@@ -27,6 +31,8 @@ class ContactsActivity : AppCompatActivity() {
 
         contactsViewModel.contacts.value =
             JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data
+
+        //mContactViewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
 
         setupRecyclerView()
         setupToolbarMenu()
@@ -66,7 +72,14 @@ class ContactsActivity : AppCompatActivity() {
                     ) { _: DialogInterface, _: Int ->
                         val name = dialog.findViewById<EditText>(R.id.name_input)!!.text.toString()
                         val number = dialog.findViewById<EditText>(R.id.number_input)!!.text.toString()
-                        val newContact = Contact(name, number, null)
+                        val newContact = Contact(name, number)
+
+                        mContactViewModel.addContact(newContact)
+
+
+
+
+
                         contactsViewModel.contacts.value = contactsViewModel.contacts.value!!.plus(newContact)
                         JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data =
                             contactsViewModel.contacts.value!!

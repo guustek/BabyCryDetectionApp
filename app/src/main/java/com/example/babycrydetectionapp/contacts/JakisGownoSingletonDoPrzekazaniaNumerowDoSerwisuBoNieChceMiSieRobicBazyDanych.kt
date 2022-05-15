@@ -4,7 +4,7 @@ object JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDa
 
     var data: List<Contact> =
         listOf(
-            Contact("Paweł", "+48512013073", null),
-            Contact("Emulator", "5554", null)
+            Contact("Paweł", "+48512013073"),
+            Contact("Emulator", "5554")
         )
 }
