@@ -1,5 +1,12 @@
 package com.example.babycrydetectionapp.contacts
 
-import android.graphics.drawable.Drawable
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-data class Contact(val name: String, val number: String, val image: Drawable?)
+@Entity(tableName = "contact_table")
+data class Contact(
+    val name: String,
+    val number: String,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0
+)
