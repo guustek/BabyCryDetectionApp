@@ -2,10 +2,12 @@ package com.example.babycrydetectionapp.contacts
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -73,19 +75,24 @@ class ContactsActivity : AppCompatActivity() {
                         val number = dialog.findViewById<EditText>(R.id.number_input)!!.text.toString()
                         val newContact = Contact(name, number)
 
-                        mContactViewModel.addContact(newContact)
+                        if (inputCheck(name, number)) {
+                            // Create Contact
+
+                            mContactViewModel.addContact(newContact)
+                            contactsViewModel.contacts.value = contactsViewModel.contacts.value!!.plus(newContact)
+                            JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data =
+                                contactsViewModel.contacts.value!!
+                            Log.d("XD", contactsViewModel.contacts.value.toString())
+                            val adapter = binding.contactsRecyclerView.adapter as ContactsAdapter
+                            adapter.notifyItemInserted(adapter.itemCount)
+                            adapter.refresh()
+
+                        }
+                        else {
+                            Toast.makeText(applicationContext, "Please fill out all fields", Toast.LENGTH_LONG).show()
+                        }
 
 
-
-
-
-                        contactsViewModel.contacts.value = contactsViewModel.contacts.value!!.plus(newContact)
-                        JakisGownoSingletonDoPrzekazaniaNumerowDoSerwisuBoNieChceMiSieRobicBazyDanych.data =
-                            contactsViewModel.contacts.value!!
-                        Log.d("XD", contactsViewModel.contacts.value.toString())
-                        val adapter = binding.contactsRecyclerView.adapter as ContactsAdapter
-                        adapter.notifyItemInserted(adapter.itemCount)
-                        adapter.refresh()
                     }
                     dialog.setButton(
                         AlertDialog.BUTTON_NEGATIVE,
@@ -118,5 +125,9 @@ class ContactsActivity : AppCompatActivity() {
                 )
             )
         }
+    }
+
+    private fun inputCheck(name : String, number : String) : Boolean {
+        return !(TextUtils.isEmpty(name) && TextUtils.isEmpty(number))
     }
 }
