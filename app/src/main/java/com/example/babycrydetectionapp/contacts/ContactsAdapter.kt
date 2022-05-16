@@ -135,8 +135,8 @@ class ContactsAdapter(private val contactsViewModel: ContactsViewModel, val cont
             binding.contactName.text = currentItem.name
             binding.contactNumber.text = currentItem.number
             binding.deleteButton.setOnClickListener {
-                contactsViewModel.contacts.value = contactsViewModel.contacts.value!!.minus(currentItem)
                 ContactDatabase.getDatabase(adapter.context).contactDao().deleteContact(currentItem)
+                contactsViewModel.contacts.value = contactsViewModel.contacts.value!!.minus(currentItem)
                 adapter.notifyItemRemoved(position)
                 adapter.refresh()
             }

@@ -9,12 +9,15 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.SystemClock
+import android.provider.ContactsContract.Contacts
 import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.babycrydetectionapp.contacts.Contact
+import com.example.babycrydetectionapp.contacts.ContactDatabase
 import com.example.babycrydetectionapp.contacts.ContactsActivity
 import com.example.babycrydetectionapp.databinding.ActivityMainBinding
 import com.example.babycrydetectionapp.tutorial.TutorialActivity
@@ -36,6 +39,9 @@ class MainActivity : AbstractActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (!ContactDatabase.getDatabase(this).contactDao().getAllContacts().contains(Contact("Emulator", "5554")))
+            ContactDatabase.getDatabase(this).contactDao().addContact(Contact("Emulator", "5554"))
 
         serviceIntent = Intent(applicationContext, ClassificationService::class.java)
         val intentFilter = IntentFilter()

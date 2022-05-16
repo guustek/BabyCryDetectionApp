@@ -1,11 +1,13 @@
 package com.example.babycrydetectionapp.tutorial
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.babycrydetectionapp.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
@@ -29,27 +31,38 @@ class TutorialActivity : AppCompatActivity() {
         navigation.menu.findItem(R.id.tutorial_navigate_next).isChecked = false
         navigation.menu.findItem(R.id.tutorial_navigate_previous).isChecked = false
         navigation.menu.findItem(R.id.tutorial_navigate_next).isEnabled = true
-        navigation.menu.findItem(R.id.tutorial_navigate_previous).isEnabled= false
+        navigation.menu.findItem(R.id.tutorial_navigate_previous).isEnabled = false
         navigation.menu.findItem(R.id.tutorial_navigate_next).isCheckable = false
         navigation.menu.findItem(R.id.tutorial_navigate_previous).isCheckable = false
         (navigation as NavigationBarView).setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.tutorial_navigate_next -> {
                     viewPager.currentItem = viewPager.currentItem + 1
-                    it.isEnabled = viewPager.currentItem != NUM_PAGES-1
-                    navigation.menu.findItem(R.id.tutorial_navigate_previous).isEnabled= viewPager.currentItem != 0
+                    it.isEnabled = viewPager.currentItem != NUM_PAGES - 1
+                    navigation.menu.findItem(R.id.tutorial_navigate_previous).isEnabled = viewPager.currentItem != 0
                     true
                 }
                 R.id.tutorial_navigate_previous -> {
                     viewPager.currentItem = viewPager.currentItem - 1
                     it.isEnabled = viewPager.currentItem != 0
-                    navigation.menu.findItem(R.id.tutorial_navigate_next).isEnabled = viewPager.currentItem != NUM_PAGES-1
+                    navigation.menu.findItem(R.id.tutorial_navigate_next).isEnabled =
+                        viewPager.currentItem != NUM_PAGES - 1
                     true
                 }
                 else -> false
             }
         }
-
+        viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                navigation.menu.findItem(R.id.tutorial_navigate_next).isEnabled = true
+                navigation.menu.findItem(R.id.tutorial_navigate_previous).isEnabled = true
+                if (position == NUM_PAGES-1)
+                    navigation.menu.findItem(R.id.tutorial_navigate_next).isEnabled = false
+                if(position == 0)
+                    navigation.menu.findItem(R.id.tutorial_navigate_previous).isEnabled = false
+            }
+        })
     }
 
     override fun onBackPressed() {
@@ -64,5 +77,6 @@ class TutorialActivity : AppCompatActivity() {
             if (position == 1) return TutorialFragment2()
             return TutorialFragment1()
         }
+
     }
 }

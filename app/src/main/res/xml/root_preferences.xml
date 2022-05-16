@@ -6,21 +6,21 @@
         <EditTextPreference
             app:key="detection_message_text"
             app:title="@string/detection_message_preference_title"
-            android:defaultValue="@string/detection_default_message"
+            app:defaultValue="@string/detection_default_message"
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreference
             android:defaultValue="false"
             android:key="mute_phone"
-            android:title="Mute phone while listening" />
+            android:title="@string/mute_phone" />
 
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/view_preferences_header">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="night_mode"
-            android:title="@string/night_mode_preference_title" />
+<!--        <SwitchPreference-->
+<!--            android:defaultValue="false"-->
+<!--            android:key="night_mode"-->
+<!--            android:title="@string/night_mode_preference_title" />-->
         <SwitchPreference
             android:defaultValue="true"
             android:key="display_results"

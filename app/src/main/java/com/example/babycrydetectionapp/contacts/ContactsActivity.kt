@@ -1,14 +1,22 @@
 package com.example.babycrydetectionapp.contacts
 
+import android.Manifest
 import android.content.DialogInterface
+import android.content.pm.PackageManager
+import android.database.Cursor
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.babycrydetectionapp.R
@@ -122,7 +130,6 @@ class ContactsActivity : AppCompatActivity() {
                     val numberInput = dialog.findViewById<EditText>(R.id.number_input)!!
                     val countryInput = dialog.findViewById<CountryCodePicker>(R.id.country_input)!!
                     countryInput.registerCarrierNumberEditText(numberInput)
-                    countryInput.setNumberAutoFormattingEnabled(true)
                     nameInput.addTextChangedListener {
                         nameInput.error=null
                         if (nameInput.text.isEmpty())
@@ -141,12 +148,12 @@ class ContactsActivity : AppCompatActivity() {
                                 ContactDatabase.getDatabase(applicationContext).contactDao().addContact(newContact)
                                 contactsViewModel.contacts.value = contactsViewModel.contacts.value!!.plus(newContact)
                                 Log.d("XD", contactsViewModel.contacts.value.toString())
+                                val adapter = binding.contactsRecyclerView.adapter as ContactsAdapter
+                                adapter.notifyItemInserted(adapter.itemCount)
+                                adapter.refresh()
+                                dialog.dismiss()
                             }else
                                 Toast.makeText(applicationContext,getString(R.string.number_exists),Toast.LENGTH_LONG).show()
-                            val adapter = binding.contactsRecyclerView.adapter as ContactsAdapter
-                            adapter.notifyItemInserted(adapter.itemCount)
-                            adapter.refresh()
-                            dialog.dismiss()
                         }
                     }
                     dialog.show()

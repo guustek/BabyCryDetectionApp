@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.provider.Settings
+import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
@@ -40,9 +41,8 @@ class SettingsActivity : AbstractActivity() {
         }
 
         override fun onSharedPreferenceChanged(p0: SharedPreferences, p1: String?) {
-            if (p1 == "mute_phone" && p0.getBoolean(p1, false)) {
+            if (p1 == "mute_phone" && p0.getBoolean(p1, false))
                 checkForMutePermissions()
-            }
         }
 
         private fun checkForMutePermissions() {

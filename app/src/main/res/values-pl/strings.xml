@@ -9,10 +9,10 @@
     <string name="settings">Ustawienia</string>
 
     <string name="open_menu">Otwórz menu</string>
-    <string name="listen_stop">Słuchaj/Stop</string>
+    <string name="listen_stop">Słuchaj/Zatrzymaj</string>
 
     <!-- Preference Headers -->
-    <string name="message_preferences_header">Wiadomość</string>
+    <string name="message_preferences_header">Wiadomości</string>
     <string name="view_preferences_header">Widok</string>
 
     <!-- Messages Preferences -->
@@ -21,28 +21,40 @@
 
     <!--Display Preferences-->
     <string name="night_mode_preference_title">Tryb nocny</string>
-    <string name="display_classification_results_preference_title">Wyświetl rezultat klasyfikacji</string>
-    <string name="display_timer_preference_title">Wyświetl stoper</string>
-    <string name="stop">Stop</string>
+    <string name="display_classification_results_preference_title">Wyświetl rezultaty klasyfikacji</string>
+    <string name="display_timer_preference_title">Wyświetl licznik</string>
+    <string name="stop">Zatrzymaj</string>
     <string name="import_from_phone">Importuj z telefonu</string>
     <string name="add_contact">Dodaj kontakt</string>
-    <string name="contact_image">Obrazek contactu</string>
+    <string name="contact_image">Obraz kontaktu</string>
     <string name="search_contact">Szukaj kontaktu</string>
     <string name="add">Dodaj</string>
     <string name="cancel">Anuluj</string>
     <string name="name">Nazwa</string>
     <string name="phone_number">Numer telefonu</string>
-    <string name="delete">usuń</string>
+    <string name="delete">Usuń</string>
     <string name="previous">Poprzedni</string>
     <string name="next">Następny</string>
-    <string name="Menu_Button">Przycisk menu</string>
-    <string name="Starts_listening_for_baby_cry">Rozpoczyna nasłuchiwać\npłaczu dziecka</string>
-    <string name="Navigation_menu">Menu Nawigacyjne</string>
-    <string name="Timer">Licznik</string>
-    <string name="timer_message">Mieży jak długo\nzajeło aplikacji\nwykrycie płaczu dziecka</string>
-    <string name="Start_Button">Przycisk start</string>
-    <string name="Add_button">Przycisk dodawania</string>
-    <string name="Used_for_adding_contacts">Służy do dodawania\nkontaktów</string>
-    <string name="Import_button">Przycisk importu</string>
-    <string name="Used_for_importing">Służy do importowania\nkontaktów z telefonu</string>
+    <string name="menu_button">Przycisk menu</string>
+    <string name="listen_button_description">Rozpoczyna nasłuchiwać\npłaczu dziecka</string>
+    <string name="menu_button_description">Pozwala nawigować między oknami aplikacji</string>
+    <string name="timer_description">Licznik</string>
+    <string name="timer_message">Liczy czas, jaki aplikacja nasłuchuje</string>
+    <string name="start_button">Przycisk start</string>
+    <string name="add_button">Przycisk dodawania</string>
+    <string name="add_button_description">Służy do dodawania\nkontaktów</string>
+    <string name="import_button">Przycisk importu</string>
+    <string name="import_button_description">Służy do importowania\nkontaktów z telefonu</string>
+    <string name="name_is_empty">Nazwa jest pusta!</string>
+    <string name="invalid_number">Błędny numer!</string>
+    <string name="edit_contact">Edytuj kontakt</string>
+    <string name="ok">OK</string>
+    <string name="number_exists">Ten numer jest już zapisany</string>
+    <string name="search_button">Przycisk szukania</string>
+    <string name="search_button_description">Służy do filtrowania kontaktów\npo nazwie lub numerze</string>
+    <string name="saved_contact">Zapisany kontakt</string>
+    <string name="contact_info">Pokazuje informacje o każdym z zapisanych kontaktów</string>
+    <string name="delete_button">Przycisk usuwania</string>
+    <string name="delete_button_description">Usuwa dany kontakt</string>
+    <string name="mute_phone">Wycisz telefon podczas nasłuchiwania</string>
 </resources>

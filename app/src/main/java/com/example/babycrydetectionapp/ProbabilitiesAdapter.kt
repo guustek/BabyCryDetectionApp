@@ -16,14 +16,14 @@ class ProbabilitiesAdapter : RecyclerView.Adapter<ProbabilitiesAdapter.ViewHolde
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val category = categoryList[position]
-        holder.bind(position, category.label, category.score)
+        holder.bind(category.label, category.score)
     }
 
     override fun getItemCount() = categoryList.size
 
     class ViewHolder(private val binding: ProbabilitiesListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(position: Int, label: String, score: Float) {
+        fun bind(label: String, score: Float) {
             with(binding) {
                 labelTextView.text = label
                 val newValue = (score * 100).toInt()

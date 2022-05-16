@@ -6,7 +6,7 @@
         android:icon="@drawable/search_24"
         android:title="@string/search_contact"
         app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="always"/>
     <item
         android:id="@+id/contacts_menu_import"
         android:title="@string/import_from_phone"

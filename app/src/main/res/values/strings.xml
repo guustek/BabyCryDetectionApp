@@ -35,21 +35,28 @@
     <string name="delete">delete</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
-    <string name="Menu_Button">Menu Button</string>
-    <string name="Starts_listening_for_baby_cry">Starts listening\nfor baby cry</string>
-    <string name="Navigation_menu">Navigation menu</string>
-    <string name="Timer">Timer</string>
-    <string name="timer_message">Mesures how long\n did it took\nfor the app to detect\nbaby crying</string>
-    <string name="Start_Button">Start Button</string>
-    <string name="Add_button">Add button</string>
-    <string name="Used_for_adding_contacts">Used for adding contacts</string>
-    <string name="Import_button">Import button</string>
-    <string name="Used_for_importing">Used for importing\ncontacts from phone</string>
+    <string name="menu_button">Menu Button</string>
+    <string name="listen_button_description">Starts listening\nfor baby cry</string>
+    <string name="menu_button_description">Allows for navigation between settings,\ncontacts and main windows</string>
+    <string name="timer_description">Timer</string>
+    <string name="timer_message">Mesures how long the app is listening</string>
+    <string name="start_button">Start Button</string>
+    <string name="add_button">Add button</string>
+    <string name="add_button_description">Used for adding contacts</string>
+    <string name="import_button">Import button</string>
+    <string name="import_button_description">Used for importing\ncontacts from phone</string>
     <string name="name_is_empty">Name is empty!</string>
     <string name="invalid_number">Invalid number!</string>
     <string name="edit_contact">Edit contact</string>
     <string name="ok">OK</string>
     <string name="number_exists">This number is already saved!</string>
+    <string name="search_button">Search button</string>
+    <string name="search_button_description">Used for filtering contacts\nby name or number</string>
+    <string name="saved_contact">Saved contact</string>
+    <string name="contact_info">Shows info about each saved contact</string>
+    <string name="delete_button">Delete button</string>
+    <string name="delete_button_description">Deletes given contact</string>
+    <string name="mute_phone">Mute phone while listening</string>
 
 
 </resources>

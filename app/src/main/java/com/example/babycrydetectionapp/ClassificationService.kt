@@ -90,19 +90,20 @@ class ClassificationService : LifecycleService() {
                 sendBroadcast(broadcastIntent)
 
                 //Baby cry, infant cry
-                if (filteredOutput.any { it.label == "Speech" }) {
+                if (filteredOutput.any { it.label == "Baby cry, infant cry" }) {
                     Log.d("Classification", "Detected!!")
                     val smsManager = SmsManager.getDefault()
+                    var smsMessage =
+                        preferences.getString("detection_message_text", getString(R.string.detection_default_message))
+                    if (smsMessage == null || smsMessage.isEmpty())
+                        smsMessage = getString(R.string.detection_default_message)
                     val contacts = ContactDatabase.getDatabase(applicationContext).contactDao().getAllContacts()
                     for (contact in contacts) {
                         try {
                             smsManager.sendTextMessage(
                                 contact.number,
                                 null,
-                                preferences.getString(
-                                    "detection_message_text",
-                                    getString(R.string.detection_default_message)
-                                ),
+                                smsMessage,
                                 null,
                                 null
                             )
