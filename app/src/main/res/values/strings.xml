@@ -57,6 +57,9 @@
     <string name="delete_button">Delete button</string>
     <string name="delete_button_description">Deletes given contact</string>
     <string name="mute_phone">Mute phone while listening</string>
+    <string name="be_careful">Be careful!</string>
+    <string name="remember">Remember that this application is not a complete replacement for real care!</string>
+    <string name="dont_show_again">Don\'t show again</string>
 
 
 </resources>

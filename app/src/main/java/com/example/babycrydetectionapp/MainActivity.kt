@@ -9,9 +9,9 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.SystemClock
-import android.provider.ContactsContract.Contacts
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -58,9 +58,7 @@ class MainActivity : AbstractActivity() {
 
         checkPermissions()
 
-        binding.classifyButton.setOnClickListener {
-            startListening()
-        }
+        binding.classifyButton.setOnClickListener(handleStartListening)
 
         binding.button.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
 
@@ -104,7 +102,32 @@ class MainActivity : AbstractActivity() {
         binding.timer.base = SystemClock.elapsedRealtime()
         stopService(Intent(this, ClassificationService::class.java))
         binding.classifyButton.setImageResource(R.drawable.micro_48dp)
-        binding.classifyButton.setOnClickListener { startListening() }
+        binding.classifyButton.setOnClickListener(handleStartListening)
+    }
+
+    private val handleStartListening = { _: View ->
+        val showDialog = preferences.getBoolean("show_dialog", true)
+        if (showDialog) {
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.be_careful))
+                .setMessage(getString(R.string.remember))
+                .setIcon(R.drawable.warning_24)
+                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                    dialog.dismiss()
+                    startListening()
+                }
+                .setNeutralButton(getString(R.string.dont_show_again)) { dialog, _ ->
+                    preferences.edit().putBoolean("show_dialog", false).apply()
+                    dialog.dismiss()
+                    startListening()
+                }
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+        } else
+            startListening()
     }
 
     @SuppressLint("NotifyDataSetChanged")
