@@ -67,6 +67,7 @@ class MainActivity : AbstractActivity() {
                 R.id.menu_tutorial -> startActivity(Intent(this, TutorialActivity::class.java))
                 R.id.menu_contacts -> startActivity(Intent(this, ContactsActivity::class.java))
                 R.id.menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
+                R.id.menu_about -> startActivity(Intent(this, AboutActivity::class.java))
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             false

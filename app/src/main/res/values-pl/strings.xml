@@ -60,4 +60,6 @@
     <string name="be_careful">Bądź ostrożny!</string>
     <string name="remember">Pamiętaj, że ta aplikacja nie zastąpi prawdziwej opieki!</string>
     <string name="dont_show_again">Nie pokazuj więcej</string>
+    <string name="about">O aplikacji</string>
+
 </resources>

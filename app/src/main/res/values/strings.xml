@@ -60,6 +60,12 @@
     <string name="be_careful">Be careful!</string>
     <string name="remember">Remember that this application is not a complete replacement for real care!</string>
     <string name="dont_show_again">Don\'t show again</string>
+    <string name="about">About</string>
 
+
+    <!--Copyrights-->
+    <string name="tensorFlowCP" translatable="false">TensorFlow - Apache 2.0</string>
+    <string name="yamnetCR" translatable="false">Yamnet -  Apache 2.0</string>
+    <string name="audioSetCR" translatable="false">AudioSet - Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</string>
 
 </resources>
