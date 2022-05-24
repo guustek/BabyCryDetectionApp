@@ -46,6 +46,7 @@ class ContactsActivity : AppCompatActivity() {
     }
 
     private fun getContactList() {
+        val deviceContacts: MutableList<Contact> = mutableListOf()
         val cr = contentResolver
         val cursor: Cursor? = cr.query(
             ContactsContract.Contacts.CONTENT_URI,
@@ -53,6 +54,7 @@ class ContactsActivity : AppCompatActivity() {
         )
         if ((cursor?.count ?: 0) > 0) {
             while (cursor != null && cursor.moveToNext()) {
+                var phoneNumber = ""
                 val id: String = cursor.getString(
                     cursor.getColumnIndex(ContactsContract.Contacts._ID)
                 )
@@ -78,14 +80,20 @@ class ContactsActivity : AppCompatActivity() {
                                 ContactsContract.CommonDataKinds.Phone.NUMBER
                             )
                         )
+                        phoneNumber = phoneNo;
                     }
-                    println(name)
+
                     pCur.close()
                 }
+                val contact = Contact(name, phoneNumber)
+                deviceContacts.add(contact)
             }
         }
-
-
+        val sizeBefore = contactsViewModel.contacts.value!!.size
+        ContactDatabase.getDatabase(this).contactDao().addContacts(deviceContacts)
+        contactsViewModel.contacts.value = ContactDatabase.getDatabase(this).contactDao().getAllContacts()
+        val sizeAfter = contactsViewModel.contacts.value!!.size
+        Toast.makeText(applicationContext, getString(R.string.imported, sizeAfter-sizeBefore), Toast.LENGTH_SHORT).show()
     }
 
     private fun setupFilterOption() {
@@ -131,20 +139,20 @@ class ContactsActivity : AppCompatActivity() {
                     val countryInput = dialog.findViewById<CountryCodePicker>(R.id.country_input)!!
                     countryInput.registerCarrierNumberEditText(numberInput)
                     nameInput.addTextChangedListener {
-                        nameInput.error=null
+                        nameInput.error = null
                         if (nameInput.text.isEmpty())
                             nameInput.error = getString(R.string.name_is_empty)
                     }
                     numberInput.addTextChangedListener {
                         numberInput.error = null
-                        if(!countryInput.isValidFullNumber)
-                           numberInput.error = getString(R.string.invalid_number)
+                        if (!countryInput.isValidFullNumber)
+                            numberInput.error = getString(R.string.invalid_number)
                     }
 
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                         if (nameInput.error == null && numberInput.error == null) {
                             val newContact = Contact(nameInput.text.toString(), countryInput.formattedFullNumber)
-                            if(!contactsViewModel.contacts.value!!.contains(newContact)) {
+                            if (!contactsViewModel.contacts.value!!.contains(newContact)) {
                                 ContactDatabase.getDatabase(applicationContext).contactDao().addContact(newContact)
                                 contactsViewModel.contacts.value = contactsViewModel.contacts.value!!.plus(newContact)
                                 Log.d("XD", contactsViewModel.contacts.value.toString())
@@ -152,8 +160,9 @@ class ContactsActivity : AppCompatActivity() {
                                 adapter.notifyItemInserted(adapter.itemCount)
                                 adapter.refresh()
                                 dialog.dismiss()
-                            }else
-                                Toast.makeText(applicationContext,getString(R.string.number_exists),Toast.LENGTH_LONG).show()
+                            } else
+                                Toast.makeText(applicationContext, getString(R.string.number_exists), Toast.LENGTH_LONG)
+                                    .show()
                         }
                     }
                     dialog.show()

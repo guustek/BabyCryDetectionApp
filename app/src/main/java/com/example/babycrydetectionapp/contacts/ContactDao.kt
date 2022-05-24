@@ -8,6 +8,9 @@ interface ContactDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     fun addContact(contact: Contact)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun addContacts(contacts: List<Contact>)
+
     @Query("SELECT * FROM contact_table ORDER BY name ASC")
     fun getAllContacts(): List<Contact>
 

@@ -2,9 +2,10 @@ package com.example.babycrydetectionapp.contacts
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "contact_table")
+@Entity(tableName = "contact_table", indices = [Index(value = ["number", "name"], unique = true)])
 data class Contact(
     val name: String,
     val number: String,
@@ -21,13 +22,16 @@ data class Contact(
 
         other as Contact
 
+        if (name != other.name) return false
         if (number != other.number) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return number.hashCode()
+        var result = name.hashCode()
+        result = 31 * result + number.hashCode()
+        return result
     }
 
 
