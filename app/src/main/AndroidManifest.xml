@@ -12,13 +12,16 @@
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <application
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:allowBackup="false"
         android:theme="@style/Theme.BabyCryDetectionApp.NoActionBar"
         tools:ignore="AllowBackup">
+        <activity
+            android:name=".AboutActivity"
+            android:exported="false" />
         <activity
             android:name=".tutorial.TutorialActivity"
             android:exported="false" />

@@ -57,4 +57,9 @@
     <string name="delete_button">Przycisk usuwania</string>
     <string name="delete_button_description">Usuwa dany kontakt</string>
     <string name="mute_phone">Wycisz telefon podczas nasłuchiwania</string>
+    <string name="be_careful">Bądź ostrożny!</string>
+    <string name="remember">Pamiętaj, że ta aplikacja nie zastąpi prawdziwej opieki!</string>
+    <string name="dont_show_again">Nie pokazuj więcej</string>
+    <string name="about">O aplikacji</string>
+
 </resources>
