@@ -60,6 +60,7 @@
     <string name="be_careful">Be careful!</string>
     <string name="remember">Remember that this application is not a complete replacement for real care!</string>
     <string name="dont_show_again">Don\'t show again</string>
+    <string name="imported">Imported %1$d contacts</string>
     <string name="about">About</string>
 
 
