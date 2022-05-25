@@ -7,34 +7,25 @@
     tools:context=".AboutActivity">
 
     <TextView
-        android:id="@+id/audioSetCR"
-        android:layout_width="370dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/audioSetCR"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/terms_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="18sp"
+        android:textColor="#6D4C41"
+        android:text="@string/terms_and_conditions"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/yamnetCR"
-        android:layout_width="370dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/yamnetCR"
-        app:layout_constraintBottom_toTopOf="@+id/audioSetCR"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/tensorFlowCR"
-        android:layout_width="370dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/tensorFlowCP"
-        app:layout_constraintBottom_toTopOf="@+id/yamnetCR"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:id="@+id/terms"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:autoLink="web"
+        android:text="@string/copyright"
+        android:textColor="#6D4C41"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/terms_label" />
 </androidx.constraintlayout.widget.ConstraintLayout>

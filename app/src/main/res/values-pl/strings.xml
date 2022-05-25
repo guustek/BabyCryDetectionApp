@@ -62,5 +62,49 @@
     <string name="dont_show_again">Nie pokazuj więcej</string>
     <string name="imported">Zaimportowano %1$d kontaktów</string>
     <string name="about">O aplikacji</string>
+    <string name="copyright">
+        Ta aplikacja uzywa biblioteki TensorFlowLite, modelu Yamnet oraz zbioru danych AudioSet i zawiera następujące powiadomienia o atrybucji:
+        \n
+        \n
+        TensorFlowLite, Yamnet model
+        \n
+        Licencja [2016-2019 TensorFlow Authors. 2015-2019 Google Inc.]
+        \n
+        \n
+        Licencjonowane na licencji Apache, Wersja 2.0;
+        nie możesz używać tego pliku, chyba że zgodnie z Licencją.
+        Kopię Licencji można uzyskać pod adresem:
+        \n
+        \n
+            http://www.apache.org/licenses/LICENSE-2.0
+        \n
+        \n
+        O ile nie jest to wymagane przez obowiązujące prawo lub nie zostało to uzgodnione na piśmie, oprogramowanie
+        dystrybuowane w ramach licencji jest rozpowszechniane na PODSTAWIE „TAK JAK JEST”,
+        BEZ JAKICHKOLWIEK GWARANCJI LUB WARUNKÓW, wyraźnych lub dorozumianych.
+        Zapoznaj się z licencją, aby uzyskać informacje o konkretnych uprawnieniach dotyczących języka i
+        ograniczenia wynikające z licencji.
+        \n
+        \n
+        AudioSet data set
+        \n
+        Licencja [2017 Google Inc.]
+        \n
+        \n
+        Licencjonowane na licencji Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0);
+        nie możesz używać tego pliku, chyba że zgodnie z Licencją.
+        Kopię Licencji można uzyskać pod adresem:
+        \n
+        \n
+            https://creativecommons.org/licenses/by-sa/4.0/
+        \n
+        \n
+         O ile nie jest to wymagane przez obowiązujące prawo lub nie zostało to uzgodnione na piśmie, oprogramowanie
+        dystrybuowane w ramach licencji jest rozpowszechniane na PODSTAWIE „TAK JAK JEST”,
+        BEZ JAKICHKOLWIEK GWARANCJI LUB WARUNKÓW, wyraźnych lub dorozumianych.
+        Zapoznaj się z licencją, aby uzyskać informacje o konkretnych uprawnieniach dotyczących języka i
+        ograniczenia wynikające z licencji.
+    </string>
+    <string name="terms_and_conditions">Licencja</string>
 
 </resources>
