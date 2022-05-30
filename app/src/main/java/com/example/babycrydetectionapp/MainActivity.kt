@@ -40,9 +40,6 @@ class MainActivity : AbstractActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (!ContactDatabase.getDatabase(this).contactDao().getAllContacts().contains(Contact("Emulator", "5554")))
-            ContactDatabase.getDatabase(this).contactDao().addContact(Contact("Emulator", "5554"))
-
         serviceIntent = Intent(applicationContext, ClassificationService::class.java)
         val intentFilter = IntentFilter()
         intentFilter.addAction(ClassificationService.RESULT_BROADCAST)
