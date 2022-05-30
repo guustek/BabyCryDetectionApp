@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context=".AboutActivity">
 
     <TextView
         android:id="@+id/terms_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:textSize="18sp"
-        android:textColor="#6D4C41"
+        android:layout_marginTop="20dp"
         android:text="@string/terms_and_conditions"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textColor="#6D4C41"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/terms"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:autoLink="web"
+        android:layout_margin="20dp"
         android:text="@string/copyright"
-        android:textColor="#6D4C41"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/terms_label" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:textColor="#6D4C41" />
+</LinearLayout>
